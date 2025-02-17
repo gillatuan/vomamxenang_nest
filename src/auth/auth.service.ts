@@ -1,6 +1,6 @@
 import { User } from '@/modules/users/entities/user.entity';
 import { UsersService } from '@/modules/users/users.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
@@ -47,18 +47,24 @@ export class AuthService {
   }
 
   async createRefreshToken(payload: UserPayload, res: Response) {
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: '7d',
+    const expires_in = this.configService.get<string>('JWT_REFRESH_EXPIRED')
+    const refresh_token = await this.jwtService.sign(payload, {
+      expiresIn: expires_in,
     });
 
-    //set refreshToken as cookies
-    res.cookie('refreshToken', refreshToken, {
+    //set refresh_token as cookies
+    res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      maxAge: ms(this.configService.get<string>('JWT_REFRESH_EXPIRED')),
+      maxAge: ms(expires_in),
     });
 
     //update user with refresh token
-    this.userService.updateUserToken(refreshToken, payload.id);
+    await this.userService.updateUserToken(refresh_token, payload.id);
+
+    return {
+      refresh_token,
+      expires_in
+    }
   }
 
   async login(user: AuthPayload, res: Response): Promise<JWTAccessToken> {
@@ -68,16 +74,22 @@ export class AuthService {
       id: user.id,
       email: user.email,
       role: user.role,
+      avatar: user.avatar,
+      address: user.address
     };
-    this.createRefreshToken(payload, res);
+    const dataRefreshToken = await this.createRefreshToken(payload, res);
     const accessToken = await this.createAccessToken(payload);
 
     return {
-      accessToken,
+      access_token: accessToken,
+      refresh_token: dataRefreshToken.refresh_token,
+      access_expire: dataRefreshToken.expires_in,
       user: {
         id: payload.id,
         email: payload.email,
         role: payload.role,
+        address: payload.address,
+        avatar: payload.avatar,
         // permissions
       },
     };

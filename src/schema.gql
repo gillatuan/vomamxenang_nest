@@ -21,7 +21,9 @@ input FilterDto {
 }
 
 type JWTAccessToken {
-  accessToken: String!
+  access_expire: String!
+  access_token: String!
+  refresh_token: String!
   user: UserPayload!
 }
 
@@ -83,6 +85,8 @@ type UserPaginationResponse {
 }
 
 type UserPayload {
+  address: String!
+  avatar: String!
   email: String!
   id: String!
   role: String!

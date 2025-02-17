@@ -73,6 +73,13 @@ export class UserPayload {
   @Field()
   @IsOptional()
   role?: RoleEnum;
+
+  @Field()
+  @IsOptional()
+  address?: string;
+
+  @Field()
+  avatar: string;
 }
 
 @ObjectType()
