@@ -26,7 +26,7 @@ export class UsersResolver {
     return this.usersService.findOne(id);
   }
 
-  @Query(() => UserPaginationResponse, { name: 'findAll' })
+  @Query(() => UserPaginationResponse, { name: 'listUsers' })
   findAll(
     @Args('qs', { nullable: true }) qs?: string,
   ): Promise<UserPaginationResponse> {

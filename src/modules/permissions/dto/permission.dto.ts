@@ -1,3 +1,4 @@
+import { PaginationResponse } from '@/modules/base/dto/pagination.response';
 import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
 
@@ -20,3 +21,10 @@ export class PermissionType {
   @IsNotEmpty({ message: 'module không được để trống' })
   module: string;
 }
+
+@ObjectType()
+export class PermissionPaginationResponse extends PaginationResponse {
+  @Field(() => [PermissionType])
+  data: PermissionType[]; // The list of items in the current page
+}
+

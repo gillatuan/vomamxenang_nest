@@ -1,17 +1,23 @@
 import { ResponseMessage, User } from '@/decorator/customize';
-import { Get } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Public } from '@/helpers/setPubicPage';
+import { Args, Mutation, Resolver , Query} from '@nestjs/graphql';
 import { IUser } from '../users/entities/users';
 import { CreatePermissionInput } from './dto/create-permission.input';
-import { PermissionType } from './dto/permission.dto';
+import { PermissionPaginationResponse, PermissionType } from './dto/permission.dto';
 import { Permission } from './entities/permission.entity';
 import { PermissionsService } from './permissions.service';
 
-@Resolver(() => Permission)
+@Resolver(() => PermissionType)
 export class PermissionsResolver {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  @Mutation(() => PermissionType)
+  @Query(() => String)
+  @Public()
+  async helloPermissions() {
+    return await 'hello Permissions ';
+  }
+
+  @Mutation(() => PermissionType, { name: 'createPermission' })
   @ResponseMessage('Create a new permission')
   create(
     @Args('createPermissionInput') createPermissionInput: CreatePermissionInput,
@@ -20,14 +26,12 @@ export class PermissionsResolver {
     return this.permissionsService.create(createPermissionInput, user);
   }
 
-  @Get()
+  @Query(() => PermissionPaginationResponse, { name: 'listPermissions' })
   @ResponseMessage('Fetch permissions with paginate')
   findAll(
-    @Args('current') currentPage: string,
-    @Args('pageSize') limit: string,
-    @Args() qs: string,
-  ) {
-    return this.permissionsService.findAll(+currentPage, +limit, qs);
+    @Args('qs', { nullable: true }) qs?: string,
+  ): Promise<PermissionPaginationResponse> {
+    return this.permissionsService.findAll(qs);
   }
 
   /* @Get(':id')

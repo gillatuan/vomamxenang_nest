@@ -1,9 +1,12 @@
+import { paginate } from '@/helpers/pagination.util';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import aqp from 'api-query-params';
 import { MongoRepository } from 'typeorm';
+import { UserType } from '../users/dto/user.dto';
 import { IUser } from '../users/entities/users';
 import { CreatePermissionInput } from './dto/create-permission.input';
+import { PermissionPaginationResponse, PermissionType } from './dto/permission.dto';
 import { UpdatePermissionInput } from './dto/update-permission.input';
 import { Permission } from './entities/permission.entity';
 
@@ -44,39 +47,8 @@ export class PermissionsService {
     };
   }
 
-  async findAll(currentPage: number, limit: number, qs: string) {
-    const { filter, sort, population, projection } = aqp(qs);
-    delete filter.current;
-    delete filter.pageSize;
-
-    let offset = (+currentPage - 1) * +limit;
-    let defaultLimit = +limit ? +limit : 10;
-
-    const [data, total] = await this.permissionRepository.findAndCount({
-      where: filter,
-      take: limit,
-      skip: offset,
-    });
-    const totalItems = await this.permissionRepository.count(filter);
-    const totalPages = Math.ceil(totalItems / defaultLimit);
-
-    /* const result = await this.permissionRepository.find(filter)
-      .skip(offset)
-      .limit(defaultLimit)
-      .sort(sort as any)
-      .populate(population)
-      .select(projection as any)
-      .exec(); */
-
-    return {
-      meta: {
-        current: currentPage, //trang hiện tại
-        pageSize: limit, //số lượng bản ghi đã lấy
-        pages: totalPages, //tổng số trang với điều kiện query
-        total, // tổng số phần tử (số bản ghi)
-      },
-      result: data, //kết quả query
-    };
+  async findAll(query: string): Promise<PermissionPaginationResponse> {
+    return paginate<PermissionType>(this.permissionRepository, query);
   }
 
   findOne(id: number) {
