@@ -9,12 +9,22 @@ input AuthRegisterInput {
   phone: String!
 }
 
-input CreatePermissionInput {
+input CreateItemInput {
   apiPath: String!
   method: String!
   module: String!
   name: String!
 }
+
+input CreateRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input FilterDto {
   s: String!
@@ -34,25 +44,45 @@ input LoginInput {
 
 type Mutation {
   authRegister(authRegisterInput: AuthRegisterInput!): UserType!
-  create(createPermissionInput: CreatePermissionInput!): PermissionType!
+  createPermission(createItemInput: CreateItemInput!): PermissionType!
+  createRole(createRoleInput: CreateRoleInput!): Role!
+  deletePermission(id: String!): PermissionType!
   login(loginInput: LoginInput!): JWTAccessToken!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
+  removeRole(id: Int!): Role!
   removeUser(id: String!): String!
-  updateUser(id: String!, updateUserInput: UpdateUserInput!): String!
+  updatePermission(id: String!, updateItemInput: UpdateItemInput!): PermissionType!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  updateUser(id: String!, updateUserInput: UpdateUserInput!): UserType!
+}
+
+type PermissionPaginationResponse {
+  currentPage: Int!
+  data: [PermissionType!]!
+  limit: Int!
+  skip: Int!
+  total: Int!
+  totalPages: Int!
 }
 
 type PermissionType {
   apiPath: String!
+  id: String!
   method: String!
   module: String!
   name: String!
 }
 
 type Query {
-  findAll(qs: String): UserPaginationResponse!
   findByEmail(email: String!): UserType!
   findOne(id: String!): UserType!
+  helloPermissions: String!
   helloo: String!
+  listPermissions(qs: String): PermissionPaginationResponse!
+  listUsers(qs: String): UserPaginationResponse!
+  me: UserType
+  role(id: Int!): Role!
+  searchTermPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
   searchTerms(filterDto: FilterDto!): UserPaginationResponse!
 }
 
@@ -64,14 +94,36 @@ input RegisterUserInput {
   phone: String!
 }
 
+type Role {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemInput {
+  apiPath: String
+  method: String
+  module: String
+  name: String
+}
+
+input UpdateRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input UpdateUserInput {
   address: String
   avatar: String
+  codeExpired: DateTime
+  codeId: String
   email: String
+  id: String
   isActive: Boolean = false
   isDeleted: Boolean!
   password: String
   phone: String
+  refreshToken: String
   role: String
 }
 
@@ -94,10 +146,14 @@ type UserPayload {
 type UserType {
   address: String!
   avatar: String
+  codeExpired: DateTime!
+  codeId: String!
   email: String!
   id: String!
   isActive: Boolean!
   isDeleted: Boolean!
+  password: String!
   phone: String!
+  refreshToken: String!
   role: String
 }
