@@ -11,7 +11,7 @@ import { RoleEnum, UserType } from './user.dto';
 @InputType()
 @ObjectType()
 @ArgsType()
-export class RegisterUserInput extends OmitType(UserType, ['id', 'avatar', 'role'] as const) {
+export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role'] as const) {
   @Field()
   @IsNotEmpty({ message: 'Email ko de trong' })
   @IsEmail({}, { message: 'Email ko dung dinh dang' })

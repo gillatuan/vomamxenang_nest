@@ -11,13 +11,16 @@ export enum RoleEnum {
 @ObjectType()
 export class UserType {
   @Field()
-  @IsUUID()
   id: string;
 
   @Field()
   @IsNotEmpty({ message: 'Email ko de trong' })
   @IsEmail({}, { message: 'Email ko dung dinh dang' })
   email: string;
+
+  @Field()
+  @IsOptional()
+  password?: string
 
   @Field()
   @IsNotEmpty({ message: 'Phone ko de trong' })
@@ -38,6 +41,15 @@ export class UserType {
 
   @Field(type => Boolean, { defaultValue: false })
   isDeleted: boolean;
+
+  @Field()
+  codeId: string;
+
+  @Field()
+  codeExpired: Date;
+
+  @Field()
+  refreshToken: string;
 }
 
 @ObjectType()

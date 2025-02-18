@@ -1,11 +1,8 @@
-import { BaseEntity } from '@/modules/base/entity/base.entity';
-import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm';
+import { BaseEntity } from "@/modules/base/entity/base.entity";
+import { Column, Entity } from "typeorm";
 
-@Entity()
+@Entity({ name: "permissions" })
 export class Permission extends BaseEntity {
-  @ObjectIdColumn()
-  _id: ObjectId;
-
   @Column()
   name: string;
 

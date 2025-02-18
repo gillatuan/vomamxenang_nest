@@ -1,12 +1,9 @@
-import { BaseEntity } from '@/modules/base/entity/base.entity';
-import { Column, Entity, ObjectId, ObjectIdColumn } from 'typeorm';
-import { RoleEnum } from '../dto/user.dto';
+import { BaseEntity } from "@/modules/base/entity/base.entity";
+import { Column, Entity } from "typeorm";
+import { RoleEnum } from "../dto/user.dto";
 
-@Entity({ name: 'users' })
+@Entity({ name: "users" })
 export class User extends BaseEntity {
-  @ObjectIdColumn()
-  _id: ObjectId;
-
   @Column()
   email: string;
 

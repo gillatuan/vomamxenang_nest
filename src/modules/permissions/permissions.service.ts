@@ -41,10 +41,7 @@ export class PermissionsService {
       },
     });
 
-    return {
-      _id: newPermission?._id,
-      createdAt: newPermission?.createdAt,
-    };
+    return await this.permissionRepository.save(newPermission);
   }
 
   async findAll(query: string): Promise<PermissionPaginationResponse> {
