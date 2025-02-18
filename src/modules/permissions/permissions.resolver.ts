@@ -3,11 +3,12 @@ import { Public } from "@/helpers/setPubicPage";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
 import { IUser } from "../users/entities/users";
-import { CreatePermissionInput } from "./dto/create-permission.input";
+import { CreateItemInput } from "./dto/create-permission.input";
 import {
   PermissionPaginationResponse,
   PermissionType,
 } from "./dto/permission.dto";
+import { UpdateItemInput } from "./dto/update-permission.input";
 import { PermissionsService } from "./permissions.service";
 
 @Resolver(() => PermissionType)
@@ -40,9 +41,27 @@ export class PermissionsResolver {
   @Mutation(() => PermissionType, { name: "createPermission" })
   @ResponseMessage("Create a new permission")
   create(
-    @Args("createPermissionInput") createPermissionInput: CreatePermissionInput,
+    @Args("createItemInput") createItemInput: CreateItemInput,
     @GqlCurrentUser() currentUser: IUser
   ) {
-    return this.permissionsService.create(createPermissionInput, currentUser);
+    return this.permissionsService.create(createItemInput, currentUser);
+  }
+
+  @Mutation(() => PermissionType, { name: "updatePermission" })
+  async updateItem(
+    @Args("id") id: string,
+    @Args("updateItemInput") updateItemInput: UpdateItemInput,
+    @GqlCurrentUser() currentUser: IUser
+  ): Promise<UpdateItemInput | false> {
+    return await this.permissionsService.updateItem(id, updateItemInput, currentUser);
+  }
+
+  @Mutation(() => PermissionType, { name: "deletePermission" })
+  @ResponseMessage("Delete a User")
+  remove(@Args('id') id: string, @GqlCurrentUser() currentUser: IUser) {
+    const resp = this.permissionsService.remove(id, currentUser);
+    if (resp) {
+      this.findAll()
+    }
   }
 }

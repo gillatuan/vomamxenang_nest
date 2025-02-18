@@ -7,6 +7,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtService } from '@nestjs/jwt';
@@ -18,6 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     private reflector: Reflector,
     private jwtService: JwtService,
     private userService: UsersService,
+    private configService: ConfigService,
   ) {
     super();
   }
@@ -43,10 +45,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_ACCESS_TOKEN_KEY,
+        secret: this.configService.get("JWT_ACCESS_TOKEN_KEY"),
       });
-      const user = await this.userService.findOne(payload.id);
-      ctx.getContext().req.user_data = user;
+      const user = await this.userService.findOne({id: payload.id});
+      ctx.getContext().req.user = user;
 
       return true;
     } catch (error) {

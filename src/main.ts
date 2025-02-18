@@ -14,7 +14,7 @@ async function bootstrap() {
   const usersService = app.get(UsersService);
 
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector, jwtService, usersService));
+  app.useGlobalGuards(new JwtAuthGuard(reflector, jwtService, usersService, configService));
   // app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
   app.useGlobalPipes(

@@ -1,8 +1,7 @@
-import { CreatePermissionInput } from '@/modules/permissions/dto/create-permission.input';
+import { CreateItemInput } from '@/modules/permissions/dto/create-permission.input';
 import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
+import { IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
-export class UpdatePermissionInput extends PartialType(CreatePermissionInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateItemInput extends PartialType(CreateItemInput) {
 }

@@ -1,10 +1,15 @@
+import { CurrentUser } from '@/decorator/customize';
 import { PaginationResponse } from '@/modules/base/dto/pagination.response';
 import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 @ObjectType()
 @ArgsType()
 export class PermissionType {
+  @Field()
+  @IsOptional()
+  id?: string;
+
   @Field()
   @IsNotEmpty({ message: 'name không được để trống' })
   name: string;
