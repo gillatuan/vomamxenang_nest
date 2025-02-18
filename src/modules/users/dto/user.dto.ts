@@ -40,14 +40,6 @@ export class UserType {
   isDeleted: boolean;
 }
 
-@InputType()
-@ArgsType()
-export class FilterDto {
-  @Field()
-  @IsOptional()
-  s: string;
-}
-
 @ObjectType()
 export class UserPaginationResponse extends PaginationResponse {
   @Field(() => [UserType])

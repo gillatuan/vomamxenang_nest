@@ -51,15 +51,7 @@ export class PermissionsService {
     return paginate<PermissionType>(this.permissionRepository, query);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} permission`;
-  }
-
-  update(id: number, updatePermissionInput: UpdatePermissionInput) {
-    return `This action updates a #${id} permission`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} permission`;
+  async searchTerms(regex: string) {
+    return await this.findAll(regex);
   }
 }

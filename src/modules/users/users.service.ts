@@ -1,24 +1,24 @@
-import { AuthRegisterInput } from '@/auth/dto/auth.dto';
-import { paginate } from '@/helpers/pagination.util';
-import { setHashPassword } from '@/helpers/utils';
+import { AuthRegisterInput } from "@/auth/dto/auth.dto";
+import { paginate } from "@/helpers/pagination.util";
+import { setHashPassword } from "@/helpers/utils";
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { isUUID } from 'class-validator';
-import { MongoRepository, Repository } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-import { UpdateUserInput } from './dto/update-user.input';
-import { FilterDto, RoleEnum, UserPaginationResponse, UserType } from './dto/user.dto';
-import { User } from './entities/user.entity';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { isUUID } from "class-validator";
+import { Repository } from "typeorm";
+import { v4 as uuid } from "uuid";
+import { UpdateUserInput } from "./dto/update-user.input";
+import { RoleEnum, UserPaginationResponse, UserType } from "./dto/user.dto";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>
   ) {}
 
   async isEmailExist(email: string) {
@@ -38,7 +38,7 @@ export class UsersService {
     const isExist = await this.isEmailExist(email);
     if (isExist) {
       throw new BadRequestException(
-        `Email da ton tai: ${email}. Hay su dung email khac`,
+        `Email da ton tai: ${email}. Hay su dung email khac`
       );
     }
 
@@ -54,10 +54,7 @@ export class UsersService {
   }
 
   updateUserToken = async (refreshToken: string, id: string) => {
-    return await this.userRepository.update(
-      { id },
-      {  refreshToken },
-    );
+    return await this.userRepository.update({ id }, { refreshToken });
   };
 
   async findAll(query: string): Promise<UserPaginationResponse> {
@@ -70,7 +67,7 @@ export class UsersService {
     }
 
     return await this.userRepository.findOneBy({
-      id
+      id,
     });
   }
 
@@ -81,7 +78,7 @@ export class UsersService {
   async updateUser(id: string, updateUserInput: UpdateUserInput) {
     const checkExistUser = await this.userRepository.findOneBy({ id });
     if (!checkExistUser) {
-      throw new NotFoundException('Khong ton tai user nay');
+      throw new NotFoundException("Khong ton tai user nay");
     }
 
     if (updateUserInput.password) {
@@ -90,12 +87,12 @@ export class UsersService {
     }
     await this.userRepository.update({ id }, { ...updateUserInput });
 
-    return 'Update user OK';
+    return "Update user OK";
   }
 
   async remove(id: string) {
     if (!isUUID(id)) {
-      throw new BadRequestException('Id ko dung dinh dang');
+      throw new BadRequestException("Id ko dung dinh dang");
     }
 
     const checkUserIsAdmin = await this.userRepository.findOneBy({
@@ -103,7 +100,7 @@ export class UsersService {
       role: RoleEnum.Admin,
     });
     if (checkUserIsAdmin) {
-      throw new BadRequestException('Ban khong co quyen xoa');
+      throw new BadRequestException("Ban khong co quyen xoa");
     }
 
     return this.updateUser(id, {

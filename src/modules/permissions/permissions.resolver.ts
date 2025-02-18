@@ -1,6 +1,7 @@
 import { ResponseMessage, User } from '@/decorator/customize';
 import { Public } from '@/helpers/setPubicPage';
 import { Args, Mutation, Resolver , Query} from '@nestjs/graphql';
+import { FilterDto } from '../base/dto/filter.dto';
 import { IUser } from '../users/entities/users';
 import { CreatePermissionInput } from './dto/create-permission.input';
 import { PermissionPaginationResponse, PermissionType } from './dto/permission.dto';
@@ -34,21 +35,12 @@ export class PermissionsResolver {
     return this.permissionsService.findAll(qs);
   }
 
-  /* @Get(':id')
-  @ResponseMessage("Fetch a permission by id")
-  findOne(@Param('id') id: string) {
-    return this.permissionsService.findOne(id);
+  @Query(() => PermissionPaginationResponse, { name: 'searchTermPermissions' })
+  searchTerms(
+    @Args('filterDto') filterDto: FilterDto,
+  ): Promise<PermissionPaginationResponse> {
+    // const regex = `email=/${filterDto.s}/&skip=0&limit=10&sort=-1`
+    const regex = filterDto.s
+    return this.permissionsService.searchTerms(regex);
   }
-
-  @Patch(':id')
-  @ResponseMessage("Update a permission")
-  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto, @User() user: IUser) {
-    return this.permissionsService.update(id, updatePermissionDto, user);
-  }
-
-  @Delete(':id')
-  @ResponseMessage("Delete a permission")
-  remove(@Param('id') id: string, @User() user: IUser) {
-    return this.permissionsService.remove(id, user);
-  } */
 }
