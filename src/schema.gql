@@ -89,7 +89,6 @@ type UserPayload {
   avatar: String!
   email: String!
   id: String!
-  role: String!
 }
 
 type UserType {

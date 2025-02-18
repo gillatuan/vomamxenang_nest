@@ -1,24 +1,23 @@
-import { RoleEnum } from '@/modules/users/dto/user.dto';
-import { ArgsType, Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
+import { ArgsType, Field, InputType, ObjectType } from "@nestjs/graphql";
+import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
 
 @InputType()
 export class AuthRegisterInput {
   @Field()
-  @IsNotEmpty({ message: 'Email ko de trong' })
-  @IsEmail({}, { message: 'Email ko dung dinh dang' })
+  @IsNotEmpty({ message: "Email ko de trong" })
+  @IsEmail({}, { message: "Email ko dung dinh dang" })
   email: string;
 
   @Field()
-  @IsNotEmpty({ message: 'Password ko de trong' })
+  @IsNotEmpty({ message: "Password ko de trong" })
   password: string;
 
   @Field()
-  @IsNotEmpty({ message: 'Phone ko de trong' })
+  @IsNotEmpty({ message: "Phone ko de trong" })
   phone: string;
 
   @Field()
-  @IsNotEmpty({ message: 'Address ko de trong' })
+  @IsNotEmpty({ message: "Address ko de trong" })
   address: string;
 }
 
@@ -57,9 +56,9 @@ export class AuthPayload {
   @IsOptional()
   avatar?: string;
 
-  @Field()
+/*   @Field()
   @IsOptional()
-  role?: RoleEnum;
+  role?: Roles; */
 }
 
 @ObjectType()
@@ -70,9 +69,9 @@ export class UserPayload {
   @Field()
   email: string;
 
-  @Field()
+/*   @Field()
   @IsOptional()
-  role?: RoleEnum;
+  role?: Roles; */
 
   @Field()
   @IsOptional()
@@ -83,10 +82,19 @@ export class UserPayload {
 }
 
 @ObjectType()
-export class JWTAccessToken {
+export class JWTRefreshAccessToken {
   @Field()
-  accessToken: string;
+  access_token: string;
 
   @Field()
   user: UserPayload;
+}
+
+@ObjectType()
+export class JWTAccessToken extends JWTRefreshAccessToken {
+  @Field()
+  refresh_token: string;
+
+  @Field()
+  access_expire: string;
 }

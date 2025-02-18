@@ -73,7 +73,7 @@ export class AuthService {
       iss: 'from server',
       id: user.id,
       email: user.email,
-      role: user.role,
+      // role: user.role,
       avatar: user.avatar,
       address: user.address
     };
@@ -87,7 +87,7 @@ export class AuthService {
       user: {
         id: payload.id,
         email: payload.email,
-        role: payload.role,
+        // role: payload.role,
         address: payload.address,
         avatar: payload.avatar,
         // permissions
