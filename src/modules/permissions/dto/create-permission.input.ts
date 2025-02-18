@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 @ArgsType()
-export class CreateItemInput {
+export class CreatePermissionInput {
   @Field()
   @IsNotEmpty({ message: 'name không được để trống' })
   name: string;

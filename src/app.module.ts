@@ -7,7 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { PermissionsModule } from './modules/permissions/permissions.module';
-import { RoleModule } from './module/role/role.module';
+import { RolesModule } from './modules/roles/roles.module';
 
 @Module({
   imports: [
@@ -42,7 +42,7 @@ import { RoleModule } from './module/role/role.module';
     UsersModule,
     AuthModule,
     PermissionsModule,
-    RoleModule,
+    RolesModule,
   ],
 })
 export class AppModule {}

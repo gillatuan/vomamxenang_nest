@@ -5,12 +5,12 @@ import { isUUID } from "class-validator";
 import { MongoRepository } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { IUser } from "../users/entities/users";
-import { CreateItemInput } from "./dto/create-permission.input";
+import { CreatePermissionInput } from "./dto/create-permission.input";
 import {
   PermissionPaginationResponse,
   PermissionType,
 } from "./dto/permission.dto";
-import { UpdateItemInput } from "./dto/update-permission.input";
+import { UpdatePermissionInput } from "./dto/update-permission.input";
 import { Permission } from "./entities/permission.entity";
 
 @Injectable()
@@ -30,7 +30,7 @@ export class PermissionsService {
     return await this.findAll(regex);
   }
 
-  async create(createPermissionDto: CreateItemInput, user: IUser) {
+  async create(createPermissionDto: CreatePermissionInput, user: IUser) {
     const { name, apiPath, method } = createPermissionDto;
 
     const isExist = await this.permissionRepository.findOneBy({
@@ -69,7 +69,7 @@ export class PermissionsService {
     return findItem;
   }
 
-  async updateItem(id: string, updateItemInput: UpdateItemInput, user: IUser) {
+  async updateItem(id: string, updateItemInput: UpdatePermissionInput, user: IUser) {
     if (!this.checkExistItem(id)) {
       return false;
     }

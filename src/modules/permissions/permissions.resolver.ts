@@ -3,12 +3,12 @@ import { Public } from "@/helpers/setPubicPage";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
 import { IUser } from "../users/entities/users";
-import { CreateItemInput } from "./dto/create-permission.input";
+import { CreatePermissionInput } from "./dto/create-permission.input";
 import {
   PermissionPaginationResponse,
   PermissionType,
 } from "./dto/permission.dto";
-import { UpdateItemInput } from "./dto/update-permission.input";
+import { UpdatePermissionInput } from "./dto/update-permission.input";
 import { PermissionsService } from "./permissions.service";
 
 @Resolver(() => PermissionType)
@@ -41,7 +41,7 @@ export class PermissionsResolver {
   @Mutation(() => PermissionType, { name: "createPermission" })
   @ResponseMessage("Create a new permission")
   create(
-    @Args("createItemInput") createItemInput: CreateItemInput,
+    @Args("createItemInput") createItemInput: CreatePermissionInput,
     @GqlCurrentUser() currentUser: IUser
   ) {
     return this.permissionsService.create(createItemInput, currentUser);
@@ -50,9 +50,9 @@ export class PermissionsResolver {
   @Mutation(() => PermissionType, { name: "updatePermission" })
   async updateItem(
     @Args("id") id: string,
-    @Args("updateItemInput") updateItemInput: UpdateItemInput,
+    @Args("updateItemInput") updateItemInput: UpdatePermissionInput,
     @GqlCurrentUser() currentUser: IUser
-  ): Promise<UpdateItemInput | false> {
+  ): Promise<UpdatePermissionInput | false> {
     return await this.permissionsService.updateItem(id, updateItemInput, currentUser);
   }
 

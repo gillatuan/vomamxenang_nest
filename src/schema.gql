@@ -9,7 +9,7 @@ input AuthRegisterInput {
   phone: String!
 }
 
-input CreateItemInput {
+input CreatePermissionInput {
   apiPath: String!
   method: String!
   module: String!
@@ -17,8 +17,9 @@ input CreateItemInput {
 }
 
 input CreateRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  description: String!
+  isActive: Boolean!
+  name: String!
 }
 
 """
@@ -44,15 +45,13 @@ input LoginInput {
 
 type Mutation {
   authRegister(authRegisterInput: AuthRegisterInput!): UserType!
-  createPermission(createItemInput: CreateItemInput!): PermissionType!
-  createRole(createRoleInput: CreateRoleInput!): Role!
+  createPermission(createItemInput: CreatePermissionInput!): PermissionType!
+  createRole(createItemInput: CreateRoleInput!): RoleType!
   deletePermission(id: String!): PermissionType!
   login(loginInput: LoginInput!): JWTAccessToken!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
-  removeRole(id: Int!): Role!
   removeUser(id: String!): String!
-  updatePermission(id: String!, updateItemInput: UpdateItemInput!): PermissionType!
-  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): UserType!
 }
 
@@ -81,7 +80,6 @@ type Query {
   listPermissions(qs: String): PermissionPaginationResponse!
   listUsers(qs: String): UserPaginationResponse!
   me: UserType
-  role(id: Int!): Role!
   searchTermPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
   searchTerms(filterDto: FilterDto!): UserPaginationResponse!
 }
@@ -94,22 +92,17 @@ input RegisterUserInput {
   phone: String!
 }
 
-type Role {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type RoleType {
+  description: String!
+  isActive: Boolean!
+  name: String!
 }
 
-input UpdateItemInput {
+input UpdatePermissionInput {
   apiPath: String
   method: String
   module: String
   name: String
-}
-
-input UpdateRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input UpdateUserInput {
