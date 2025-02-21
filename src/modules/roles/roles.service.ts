@@ -43,7 +43,7 @@ export class RolesService {
 
     const findItem = await this.roleRepository.findOneBy({ id });
     if (!findItem) {
-      throw new BadRequestException("Permission does not exist");
+      throw new BadRequestException("Role does not exist");
     }
 
     return findItem;

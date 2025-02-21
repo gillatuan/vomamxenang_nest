@@ -26,7 +26,6 @@ export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role'] as 
   address: string;
 
   @Field()
-  @IsOptional()
   avatar?: string;
 
   @Field()

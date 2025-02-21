@@ -24,8 +24,6 @@ export class CreateRoleInput extends CreateInput {
   @IsBoolean({ message: "isActive có giá trị boolean" })
   isActive: boolean;
 
-  @IsOptional()
-  @IsMongoId({ each: true, message: "each permission là mongo object id" })
   @IsArray({ message: "permissions có định dạng là array" })
   permissions: CreatePermissionInput[];
 }

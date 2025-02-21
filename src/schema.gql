@@ -11,6 +11,7 @@ input AuthRegisterInput {
 
 input CreatePermissionInput {
   apiPath: String!
+  id: String!
   method: String!
   module: String!
   name: String!
@@ -18,6 +19,7 @@ input CreatePermissionInput {
 
 input CreateRoleInput {
   description: String!
+  id: String!
   isActive: Boolean!
   name: String!
 }
@@ -103,6 +105,7 @@ type RoleType {
 
 input UpdatePermissionInput {
   apiPath: String
+  id: String
   method: String
   module: String
   name: String
@@ -110,6 +113,7 @@ input UpdatePermissionInput {
 
 input UpdateRoleInput {
   description: String
+  id: String
   isActive: Boolean
   name: String
 }
@@ -120,12 +124,13 @@ input UpdateUserInput {
   codeExpired: DateTime
   codeId: String
   email: String
+  id: String
   isActive: Boolean = false
   isDeleted: Boolean!
-  password: String
+  password: String!
   phone: String
   refreshToken: String
-  role: String
+  role: String!
 }
 
 type UserPaginationResponse {

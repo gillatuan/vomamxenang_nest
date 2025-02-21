@@ -17,7 +17,6 @@ export class UserType extends CreateInput {
   email: string;
 
   @Field()
-  @IsOptional()
   password?: string;
 
   @Field()

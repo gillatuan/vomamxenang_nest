@@ -1,10 +1,7 @@
-import { ArgsType, Field, ObjectType } from "@nestjs/graphql";
-import { IsOptional } from "class-validator";
+import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
-@ArgsType()
 export class BaseType {
-  @IsOptional()
   @Field()
-  id: string;
+  id?: string;
 }

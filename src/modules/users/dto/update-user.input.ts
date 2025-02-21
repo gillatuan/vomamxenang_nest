@@ -5,13 +5,13 @@ import { RoleEnum } from './user.dto';
 
 @InputType()
 export class UpdateUserInput extends PartialType(RegisterUserInput) {
-  @Field({ nullable: true })
+  @Field()
   password?: string;
 
   @Field()
   isDeleted: boolean;
 
-  @Field({ nullable: true })
+  @Field()
   role?: RoleEnum;
 
   @Column()

@@ -37,13 +37,12 @@ export class LoginInput {
 @ObjectType()
 export class AuthPayload {
   @Field()
-  id: string;
+  id?: string;
 
   @Field()
   email: string;
 
   @Field()
-  @IsOptional()
   providerId?: string;
 
   @Field()
@@ -56,7 +55,7 @@ export class AuthPayload {
   @IsOptional()
   avatar?: string;
 
-/*   @Field()
+  /*   @Field()
   @IsOptional()
   role?: Roles; */
 }
@@ -69,7 +68,7 @@ export class UserPayload {
   @Field()
   email: string;
 
-/*   @Field()
+  /*   @Field()
   @IsOptional()
   role?: Roles; */
 

@@ -1,16 +1,16 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class PaginationInput {
-  @Field({ nullable: true })
+  @Field()
   filter?: string; // JSON string for filtering
 
-  @Field({ nullable: true })
+  @Field()
   sort?: string; // JSON string for sorting
 
-  @Field({ nullable: true })
+  @Field()
   limit?: number; // Limit for pagination
 
-  @Field({ nullable: true })
+  @Field()
   skip?: number; // Offset for pagination
 }

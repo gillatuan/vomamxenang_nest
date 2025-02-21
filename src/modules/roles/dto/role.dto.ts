@@ -15,6 +15,6 @@ export class RoleType {
   @Field()
   isActive: boolean;
 
-  @Field(() => [PermissionType]) // ✅ Explicitly define the GraphQL type
+  @Field(() => [PermissionType], { defaultValue: [] }) // ✅ Explicitly define the GraphQL type
   permissions: PermissionType[];
 }

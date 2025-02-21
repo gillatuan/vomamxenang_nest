@@ -1,8 +1,7 @@
-import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { IsOptional } from "class-validator";
+import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class CreateInput {
-  @IsOptional()
+  @Field()
   id?: string; // Sau này sẽ dùng với class-transformer để serialize dữ liệu response
 }
