@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { IsOptional, IsUUID } from "class-validator";
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -7,6 +8,7 @@ import {
   ObjectId,
   ObjectIdColumn,
 } from "typeorm";
+import { v4 as uuid } from "uuid";
 
 ObjectType();
 export class BaseEntity {
@@ -15,9 +17,11 @@ export class BaseEntity {
 
   @Field()
   @Column()
+  @IsUUID()
+  @IsOptional()
   id: string; // Sau này sẽ dùng với class-transformer để serialize dữ liệu response
 
-  @Column({ default: null })
+  @Column()
   @Field()
   @CreateDateColumn({ type: "timestamp" }) // Auto set on insert
   createdAt: Date;
@@ -27,7 +31,7 @@ export class BaseEntity {
     email: string;
   };
 
-  @Column({ default: null })
+  @Column()
   @Field()
   @CreateDateColumn({ type: "timestamp" }) // Auto set on insert
   updatedAt: Date;
@@ -41,8 +45,10 @@ export class BaseEntity {
   @Field()
   @CreateDateColumn({ type: "timestamp" }) // Auto set on insert
   deletedAt: Date;
-  @Column()
+
+  @Column({ default: false })
   isDeleted: boolean;
+
   @Column()
   deletedBy: {
     _id: ObjectId;
@@ -51,8 +57,10 @@ export class BaseEntity {
 
   @BeforeInsert()
   setCreatedAt() {
+    this.id = uuid();
     this.createdAt = new Date();
     this.updatedAt = new Date();
+    this.isDeleted = false;
   }
 
   @BeforeUpdate()

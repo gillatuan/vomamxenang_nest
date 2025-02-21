@@ -45,13 +45,14 @@ input LoginInput {
 
 type Mutation {
   authRegister(authRegisterInput: AuthRegisterInput!): UserType!
-  createPermission(createItemInput: CreatePermissionInput!): PermissionType!
-  createRole(createItemInput: CreateRoleInput!): RoleType!
+  createPermission(createPermissionInput: CreatePermissionInput!): PermissionType!
+  createRole(createRoleInput: CreateRoleInput!): RoleType!
   deletePermission(id: String!): PermissionType!
   login(loginInput: LoginInput!): JWTAccessToken!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeUser(id: String!): String!
   updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
+  updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleType!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): UserType!
 }
 
@@ -94,8 +95,10 @@ input RegisterUserInput {
 
 type RoleType {
   description: String!
+  id: String!
   isActive: Boolean!
   name: String!
+  permissions: [PermissionType!]!
 }
 
 input UpdatePermissionInput {
@@ -105,13 +108,18 @@ input UpdatePermissionInput {
   name: String
 }
 
+input UpdateRoleInput {
+  description: String
+  isActive: Boolean
+  name: String
+}
+
 input UpdateUserInput {
   address: String
   avatar: String
   codeExpired: DateTime
   codeId: String
   email: String
-  id: String
   isActive: Boolean = false
   isDeleted: Boolean!
   password: String
@@ -142,7 +150,6 @@ type UserType {
   codeExpired: DateTime!
   codeId: String!
   email: String!
-  id: String!
   isActive: Boolean!
   isDeleted: Boolean!
   password: String!

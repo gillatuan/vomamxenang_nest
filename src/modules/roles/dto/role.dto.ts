@@ -1,8 +1,11 @@
+import { PermissionType } from "@/modules/permissions/dto/permission.dto";
 import { Field, ObjectType } from "@nestjs/graphql";
-import { ObjectId } from "typeorm";
 
 @ObjectType()
 export class RoleType {
+  @Field()
+  id: string;
+
   @Field()
   name: string;
 
@@ -12,6 +15,6 @@ export class RoleType {
   @Field()
   isActive: boolean;
 
-/*   @Field(() => ObjectId)
-  permissions: ObjectId[]; */
+  @Field(() => [PermissionType]) // ✅ Explicitly define the GraphQL type
+  permissions: PermissionType[];
 }

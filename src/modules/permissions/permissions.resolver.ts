@@ -41,10 +41,10 @@ export class PermissionsResolver {
   @Mutation(() => PermissionType, { name: "createPermission" })
   @ResponseMessage("Create a new permission")
   create(
-    @Args("createItemInput") createItemInput: CreatePermissionInput,
+    @Args("createPermissionInput") createPermissionInput: CreatePermissionInput,
     @GqlCurrentUser() currentUser: IUser
   ) {
-    return this.permissionsService.create(createItemInput, currentUser);
+    return this.permissionsService.create(createPermissionInput, currentUser);
   }
 
   @Mutation(() => PermissionType, { name: "updatePermission" })

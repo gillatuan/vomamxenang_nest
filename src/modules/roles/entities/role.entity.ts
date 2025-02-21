@@ -1,5 +1,7 @@
 import { BaseEntity } from "@/modules/base/entity/base.entity";
-import { Column, Entity, ObjectId } from "typeorm";
+import { Permission } from "@/modules/permissions/entities/permission.entity";
+import { IsOptional } from "class-validator";
+import { BeforeInsert, Column, Entity } from "typeorm";
 
 @Entity({ name: "roles" })
 export class Role extends BaseEntity {
@@ -10,8 +12,13 @@ export class Role extends BaseEntity {
   description: string;
 
   @Column()
+  permissions: Permission[];
+
+  @Column()
   isActive: boolean;
 
-/*   @Column(() => ObjectId)
-  permissions: ObjectId[]; */
+  @BeforeInsert()
+  setIsActive() {
+    this.isActive = true;
+  }
 }

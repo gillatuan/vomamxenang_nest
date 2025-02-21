@@ -4,6 +4,7 @@ import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { IUser } from "../users/entities/users";
 import { CreateRoleInput } from "./dto/create-role.input";
 import { RoleType } from "./dto/role.dto";
+import { UpdateRoleInput } from "./dto/update-role.input";
 import { Role } from "./entities/role.entity";
 import { RolesService } from "./roles.service";
 
@@ -14,9 +15,18 @@ export class RolesResolver {
   @Mutation(() => RoleType, { name: "createRole" })
   @ResponseMessage("Create a new permission")
   create(
-    @Args("createItemInput") createItemInput: CreateRoleInput,
+    @Args("createRoleInput") createRoleInput: CreateRoleInput,
     @GqlCurrentUser() currentUser: IUser
   ) {
-    return this.rolesService.create(createItemInput, currentUser);
+    return this.rolesService.create(createRoleInput, currentUser);
+  }
+
+  @Mutation(() => RoleType, { name: "updateRole" })
+  async updateItem(
+    @Args("id") id: string,
+    @Args("updateItemInput") updateItemInput: UpdateRoleInput,
+    @GqlCurrentUser() currentUser: IUser
+  ): Promise<UpdateRoleInput | false> {
+    return await this.rolesService.updateItem(id, updateItemInput, currentUser);
   }
 }

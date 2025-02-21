@@ -58,7 +58,7 @@ export class PermissionsService {
 
   async checkExistItem(id) {
     if (!isUUID(id)) {
-      return `not found user`;
+      return `Id is incorrect format`;
     }
 
     const findItem = await this.permissionRepository.findOneBy({ id });
