@@ -10,8 +10,7 @@ input AuthRegisterInput {
 }
 
 input CreatePermissionInput {
-  apiPath: String!
-  id: String!
+  id: String
   method: String!
   module: String!
   name: String!
@@ -19,9 +18,10 @@ input CreatePermissionInput {
 
 input CreateRoleInput {
   description: String!
-  id: String!
+  id: String
   isActive: Boolean!
   name: String!
+  permissions: [CreatePermissionInput!]! = []
 }
 
 """
@@ -68,11 +68,10 @@ type PermissionPaginationResponse {
 }
 
 type PermissionType {
-  apiPath: String!
   id: String!
   method: String!
   module: String!
-  name: String!
+  name: String
 }
 
 type Query {
@@ -104,7 +103,6 @@ type RoleType {
 }
 
 input UpdatePermissionInput {
-  apiPath: String
   id: String
   method: String
   module: String
@@ -116,6 +114,7 @@ input UpdateRoleInput {
   id: String
   isActive: Boolean
   name: String
+  permissions: [CreatePermissionInput!] = []
 }
 
 input UpdateUserInput {

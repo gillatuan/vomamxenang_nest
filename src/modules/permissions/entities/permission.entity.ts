@@ -7,9 +7,6 @@ export class Permission extends BaseEntity {
   name: string;
 
   @Column()
-  apiPath: string;
-
-  @Column()
   method: string;
 
   @Column()

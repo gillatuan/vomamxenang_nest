@@ -38,7 +38,7 @@ export class RolesService {
 
   async checkExistItem(id) {
     if (!isUUID(id)) {
-      return `Id is incorrect format`;
+      throw new BadRequestException("Id is incorrect format");
     }
 
     const findItem = await this.roleRepository.findOneBy({ id });
@@ -50,8 +50,14 @@ export class RolesService {
   }
 
   async updateItem(id: string, updateItemInput: UpdateRoleInput, user: IUser) {
-    if (!this.checkExistItem(id)) {
+    const findItem = await this.checkExistItem(id);
+    if (!findItem) {
       return false;
+    }
+
+    const dataNeedToUpdate = {
+      ...findItem,
+      ...updateItemInput,
     }
 
     await this.roleRepository.updateOne(
@@ -67,6 +73,6 @@ export class RolesService {
       }
     );
 
-    return updateItemInput;
+    return dataNeedToUpdate;
   }
 }

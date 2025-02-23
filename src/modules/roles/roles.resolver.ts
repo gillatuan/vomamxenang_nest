@@ -26,7 +26,7 @@ export class RolesResolver {
     @Args("id") id: string,
     @Args("updateItemInput") updateItemInput: UpdateRoleInput,
     @GqlCurrentUser() currentUser: IUser
-  ): Promise<UpdateRoleInput | false> {
+  ) {
     return await this.rolesService.updateItem(id, updateItemInput, currentUser);
   }
 }

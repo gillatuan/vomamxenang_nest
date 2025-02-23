@@ -31,16 +31,15 @@ export class PermissionsService {
   }
 
   async create(createPermissionDto: CreatePermissionInput, user: IUser) {
-    const { name, apiPath, method } = createPermissionDto;
+    const { name, method } = createPermissionDto;
 
     const isExist = await this.permissionRepository.findOneBy({
       name,
-      apiPath,
       method,
     });
     if (isExist) {
       throw new BadRequestException(
-        `Permission với name=${name}, apiPath=${apiPath} va method=${method} đã tồn tại!`
+        `Permission với name=${name} va method=${method} đã tồn tại!`
       );
     }
 
@@ -58,7 +57,7 @@ export class PermissionsService {
 
   async checkExistItem(id) {
     if (!isUUID(id)) {
-      return `Id is incorrect format`;
+      throw new BadRequestException("Id is incorrect format");
     }
 
     const findItem = await this.permissionRepository.findOneBy({ id });
@@ -70,15 +69,21 @@ export class PermissionsService {
   }
 
   async updateItem(id: string, updateItemInput: UpdatePermissionInput, user: IUser) {
-    if (!this.checkExistItem(id)) {
+    const findItem = await this.checkExistItem(id);
+    if (!findItem) {
       return false;
+    }
+
+    const dataNeedToUpdate = {
+      ...findItem,
+      ...updateItemInput,
     }
 
     await this.permissionRepository.updateOne(
       { id },
       {
         $set: {
-          ...updateItemInput,
+          ...dataNeedToUpdate,
           updatedBy: {
             _id: user._id,
             email: user.email,
@@ -87,11 +92,12 @@ export class PermissionsService {
       }
     );
 
-    return updateItemInput;
+    return dataNeedToUpdate;
   }
 
   async remove(id: string, user: IUser) {
-    if (!this.checkExistItem(id)) {
+    const findItem = await this.checkExistItem(id);
+    if (!findItem) {
       return false;
     }
 

@@ -1,8 +1,9 @@
 import { BaseEntity } from "@/modules/base/entity/base.entity";
 import { Permission } from "@/modules/permissions/entities/permission.entity";
-import { IsOptional } from "class-validator";
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { ObjectType } from "@nestjs/graphql";
+import { BeforeInsert, Column, Entity, JoinTable, ObjectId, OneToMany } from "typeorm";
 
+@ObjectType()
 @Entity({ name: "roles" })
 export class Role extends BaseEntity {
   @Column()

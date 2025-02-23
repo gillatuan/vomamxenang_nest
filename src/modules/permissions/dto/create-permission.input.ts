@@ -10,10 +10,6 @@ export class CreatePermissionInput extends CreateInput {
   name: string;
 
   @Field()
-  @IsNotEmpty({ message: "apiPath không được để trống" })
-  apiPath: string;
-
-  @Field()
   @IsNotEmpty({ message: "method không được để trống" })
   method: string;
 
