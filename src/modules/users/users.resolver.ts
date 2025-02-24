@@ -1,8 +1,10 @@
 import { CurrentUser, GqlCurrentUser } from "@/decorator/customize";
 import { Public } from "@/helpers/setPubicPage";
+import { TransformInterceptor } from "@/lib/transform.interceptor";
 import { UserPaginationResponse, UserType } from "@/modules/users/dto/user.dto";
 import { User } from "@/modules/users/entities/user.entity";
 import { UsersService } from "@/modules/users/users.service";
+import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
 import { RegisterUserInput } from "./dto/create-user.input";
@@ -24,7 +26,7 @@ export class UsersResolver {
   }
 
   @Query(() => UserType)
-  findOne(@Args("id") id: string, @GqlCurrentUser() user): Promise<User | string> {
+  findOne(@Args("id") id: string, @GqlCurrentUser() currentUser): Promise<User | string> {
     return this.usersService.findOne({ id });
   }
 
@@ -44,6 +46,7 @@ export class UsersResolver {
     return this.usersService.searchTerms(regex);
   }
 
+  // @UseInterceptors(TransformInterceptor)
   @Query(() => UserType)
   async findByEmail(@Args("email") email: string): Promise<UserType | null> {
     return await this.usersService.findByEmail(email);
@@ -56,16 +59,16 @@ export class UsersResolver {
     return await this.usersService.register(registerUserInput);
   }
 
-  @Mutation(() => String)
-  async removeUser(@Args("id") id: string): Promise<String> {
-    return await this.usersService.remove(id);
+  @Mutation(() => UserType)
+  async removeUser(@Args("id") id: string, @GqlCurrentUser() currentUser): Promise<UpdateUserInput> {
+    return await this.usersService.remove(id, currentUser);
   }
 
   @Mutation(() => UserType, {name: "updateUser"})
   async updateUser(
     @Args("id") id: string,
     @Args("updateUserInput") updateUserInput: UpdateUserInput
-  ): Promise<string> {
+  ): Promise<UpdateUserInput> {
     return await this.usersService.updateUser(id, updateUserInput);
   }
 }

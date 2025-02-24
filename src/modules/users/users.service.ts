@@ -13,6 +13,7 @@ import { v4 as uuid } from "uuid";
 import { UpdateUserInput } from "./dto/update-user.input";
 import { RoleEnum, UserPaginationResponse } from "./dto/user.dto";
 import { User } from "./entities/user.entity";
+import { IUser } from "./entities/users";
 
 @Injectable()
 export class UsersService {
@@ -93,29 +94,32 @@ export class UsersService {
     }
     await this.userRepository.update({ id }, { ...updateUserInput });
 
-    return "Update user OK";
+    return updateUserInput
   }
 
-  async remove(id: string) {
+  async remove(id: string, currentUser: IUser) {
     if (!isUUID(id)) {
       throw new BadRequestException("Id ko dung dinh dang");
     }
 
     const checkUserIsAdmin = await this.userRepository.findOneBy({
-      id,
+      id: currentUser.id,
       role: RoleEnum.Admin,
     });
-    if (checkUserIsAdmin) {
+    if (!checkUserIsAdmin) {
       throw new BadRequestException("Ban khong co quyen xoa");
     }
 
-    return this.updateUser(id, {
+    const updateUserInput = {
       isDeleted: true,
       deletedBy: {
         _id: checkUserIsAdmin._id,
         email: checkUserIsAdmin.email,
       },
-    });
+    }
+
+    await this.userRepository.update({ id }, updateUserInput);
+    return updateUserInput
   }
 
   async searchTerms(regex: string) {
