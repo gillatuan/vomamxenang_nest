@@ -29,7 +29,7 @@ export class PermissionsResolver {
     return this.permissionsService.findAll(qs);
   }
 
-  @Query(() => PermissionPaginationResponse, { name: "searchTermPermissions" })
+  @Query(() => PermissionPaginationResponse, { name: "searchTermOfPermissions" })
   searchTerms(
     @Args("filterDto") filterDto: FilterDto
   ): Promise<PermissionPaginationResponse> {

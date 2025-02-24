@@ -35,7 +35,7 @@ export class UsersResolver {
     return this.usersService.findAll(qs);
   }
 
-  @Query(() => UserPaginationResponse, { name: "searchTerms" })
+  @Query(() => UserPaginationResponse, { name: "searchTermsOfUser" })
   searchTerms(
     @Args("filterDto") filterDto: FilterDto
   ): Promise<UserPaginationResponse> {
@@ -45,7 +45,7 @@ export class UsersResolver {
   }
 
   @Query(() => UserType)
-  async findByEmail(@Args("email") email: string): Promise<User> {
+  async findByEmail(@Args("email") email: string): Promise<UserType | null> {
     return await this.usersService.findByEmail(email);
   }
 

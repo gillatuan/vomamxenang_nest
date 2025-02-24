@@ -82,8 +82,8 @@ type Query {
   listPermissions(qs: String): PermissionPaginationResponse!
   listUsers(qs: String): UserPaginationResponse!
   me: UserType
-  searchTermPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
-  searchTerms(filterDto: FilterDto!): UserPaginationResponse!
+  searchTermOfPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
+  searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponse!
 }
 
 input RegisterUserInput {
@@ -154,8 +154,9 @@ type UserType {
   codeExpired: DateTime!
   codeId: String!
   email: String!
-  isActive: Boolean!
-  isDeleted: Boolean!
+  id: String!
+  isActive: Boolean
+  isDeleted: Boolean
   password: String!
   phone: String!
   refreshToken: String!

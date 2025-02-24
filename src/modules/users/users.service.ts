@@ -73,7 +73,12 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    return await this.userRepository.findOneBy({ email });
+    const findItem = await this.userRepository.findOneBy({ email });
+    if (!findItem) {
+      throw new NotFoundException("Khong ton tai user nay");
+    }
+    
+    return findItem;
   }
 
   async updateUser(id: string, updateUserInput: UpdateUserInput) {

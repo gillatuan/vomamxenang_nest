@@ -1,5 +1,5 @@
 // user.dto.ts
-import { CreateInput } from "@/modules/base/dto/create.input";
+import { BaseType } from "@/modules/base/dto/base.dto";
 import { PaginationResponse } from "@/modules/base/dto/pagination.response";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
@@ -10,34 +10,30 @@ export enum RoleEnum {
 }
 
 @ObjectType()
-export class UserType extends CreateInput {
+export class UserType extends BaseType {
   @Field()
-  @IsNotEmpty({ message: "Email ko de trong" })
-  @IsEmail({}, { message: "Email ko dung dinh dang" })
   email: string;
 
   @Field()
   password?: string;
 
   @Field()
-  @IsNotEmpty({ message: "Phone ko de trong" })
   phone: string;
 
   @Field()
-  @IsNotEmpty({ message: "Address ko de trong" })
   address: string;
 
-  @Field(() => String, { nullable: true })
-  avatar: string;
+  @Field({ defaultValue: "", nullable: true })
+  avatar?: string;
 
-  @Field(() => String, { nullable: true })
-  role: RoleEnum;
+  @Field({ nullable: true })
+  role?: string;
 
-  @Field(() => Boolean, { defaultValue: false })
+  @Field({ defaultValue: false, nullable: true })
   isActive?: boolean;
 
-  @Field(() => Boolean, { defaultValue: false })
-  isDeleted: boolean;
+  @Field({ defaultValue: false, nullable: true })
+  isDeleted?: boolean;
 
   @Field()
   codeId: string;
