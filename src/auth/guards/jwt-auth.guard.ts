@@ -1,4 +1,4 @@
-import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from "@/helpers/setPubicPage";
+import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from "@/helpers/customize";
 import { UsersService } from "@/modules/users/users.service";
 import {
   BadRequestException,

@@ -7,7 +7,7 @@ import {
   LoginInput,
 } from '@/auth/dto/auth.dto';
 import { LocalAuthGuard } from '@/auth/guards/local-auth.guard';
-import { Public } from '@/helpers/setPubicPage';
+import { Public } from '@/helpers/customize';
 import { UserType } from '@/modules/users/dto/user.dto';
 import { User } from '@/modules/users/entities/user.entity';
 import { UseGuards } from '@nestjs/common';

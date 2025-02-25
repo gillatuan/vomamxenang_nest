@@ -52,7 +52,7 @@ type Mutation {
   deletePermission(id: String!): PermissionType!
   login(loginInput: LoginInput!): JWTAccessToken!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
-  removeUser(id: String!): String!
+  removeUser(id: String!): UserType!
   updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
   updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleType!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): UserType!
@@ -75,7 +75,7 @@ type PermissionType {
 }
 
 type Query {
-  findByEmail(email: String!): UserType!
+  findByEmail(email: String!): UserResponse
   findOne(id: String!): UserType!
   helloPermissions: String!
   helloo: String!
@@ -146,6 +146,13 @@ type UserPayload {
   avatar: String!
   email: String!
   id: String!
+}
+
+type UserResponse {
+  data: UserType!
+  error: String
+  message: String!
+  statusCode: Float!
 }
 
 type UserType {
