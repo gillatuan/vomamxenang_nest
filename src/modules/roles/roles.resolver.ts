@@ -1,5 +1,4 @@
-import { GqlCurrentUser } from "@/decorator/customize";
-import { ResponseMessage } from "@/helpers/setPubicPage";
+import { ResponseMessage, GqlCurrentUser } from "@/helpers/customize";
 import { Args, Mutation, Resolver } from "@nestjs/graphql";
 import { IUser } from "../users/entities/users";
 import { CreateRoleInput } from "./dto/create-role.input";

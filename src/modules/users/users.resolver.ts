@@ -1,7 +1,10 @@
-import { CurrentUser, GqlCurrentUser } from "@/decorator/customize";
-import { Public } from "@/helpers/setPubicPage";
-import { TransformInterceptor } from "@/lib/transform.interceptor";
-import { UserPaginationResponse, UserType } from "@/modules/users/dto/user.dto";
+import { GqlCurrentUser, Public, ResponseMessage } from "@/helpers/customize";
+import { GraphQLTransformInterceptor } from "@/lib/graphql.transform.interceptor";
+import {
+  UserPaginationResponse,
+  UserResponse,
+  UserType,
+} from "@/modules/users/dto/user.dto";
 import { User } from "@/modules/users/entities/user.entity";
 import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
@@ -10,14 +13,14 @@ import { FilterDto } from "../base/dto/filter.dto";
 import { RegisterUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 
-@Resolver(() => UserType)
+@Resolver(() => UserResponse)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => String)
   @Public()
   async helloo() {
-    return await "world";
+    return await "User Hello world";
   }
 
   @Query(() => UserType, { nullable: true })
@@ -26,7 +29,10 @@ export class UsersResolver {
   }
 
   @Query(() => UserType)
-  findOne(@Args("id") id: string, @GqlCurrentUser() currentUser): Promise<User | string> {
+  findOne(
+    @Args("id") id: string,
+    @GqlCurrentUser() currentUser
+  ): Promise<User | string> {
     return this.usersService.findOne({ id });
   }
 
@@ -46,9 +52,10 @@ export class UsersResolver {
     return this.usersService.searchTerms(regex);
   }
 
-  // @UseInterceptors(TransformInterceptor)
-  @Query(() => UserType)
-  async findByEmail(@Args("email") email: string): Promise<UserType | null> {
+  @UseInterceptors(GraphQLTransformInterceptor<UserResponse>)
+  @ResponseMessage("Fetch permissions with paginate")
+  @Query(() => UserResponse, { nullable: true })
+  async findByEmail(@Args("email") email: string) {
     return await this.usersService.findByEmail(email);
   }
 
@@ -60,11 +67,14 @@ export class UsersResolver {
   }
 
   @Mutation(() => UserType)
-  async removeUser(@Args("id") id: string, @GqlCurrentUser() currentUser): Promise<UpdateUserInput> {
+  async removeUser(
+    @Args("id") id: string,
+    @GqlCurrentUser() currentUser
+  ): Promise<UpdateUserInput> {
     return await this.usersService.remove(id, currentUser);
   }
 
-  @Mutation(() => UserType, {name: "updateUser"})
+  @Mutation(() => UserType, { name: "updateUser" })
   async updateUser(
     @Args("id") id: string,
     @Args("updateUserInput") updateUserInput: UpdateUserInput

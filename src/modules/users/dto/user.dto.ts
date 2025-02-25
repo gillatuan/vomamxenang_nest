@@ -1,5 +1,6 @@
 // user.dto.ts
 import { BaseType } from "@/modules/base/dto/base.dto";
+import { GraphQLResponse } from "@/modules/base/dto/graphql-response.dto";
 import { PaginationResponse } from "@/modules/base/dto/pagination.response";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
@@ -49,4 +50,10 @@ export class UserType extends BaseType {
 export class UserPaginationResponse extends PaginationResponse {
   @Field(() => [UserType])
   data: UserType[]; // The list of items in the current page
+}
+
+@ObjectType()
+export class UserResponse extends GraphQLResponse {
+  @Field(() => UserType)
+  data: UserType; // The list of items in the current page
 }

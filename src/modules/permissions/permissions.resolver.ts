@@ -1,5 +1,4 @@
-import { GqlCurrentUser, ResponseMessage } from "@/decorator/customize";
-import { Public } from "@/helpers/setPubicPage";
+import { GqlCurrentUser, Public, ResponseMessage } from "@/decorator/customize";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
 import { IUser } from "../users/entities/users";
@@ -29,7 +28,9 @@ export class PermissionsResolver {
     return this.permissionsService.findAll(qs);
   }
 
-  @Query(() => PermissionPaginationResponse, { name: "searchTermOfPermissions" })
+  @Query(() => PermissionPaginationResponse, {
+    name: "searchTermOfPermissions",
+  })
   searchTerms(
     @Args("filterDto") filterDto: FilterDto
   ): Promise<PermissionPaginationResponse> {
@@ -53,15 +54,19 @@ export class PermissionsResolver {
     @Args("updateItemInput") updateItemInput: UpdatePermissionInput,
     @GqlCurrentUser() currentUser: IUser
   ): Promise<UpdatePermissionInput | false> {
-    return await this.permissionsService.updateItem(id, updateItemInput, currentUser);
+    return await this.permissionsService.updateItem(
+      id,
+      updateItemInput,
+      currentUser
+    );
   }
 
   @Mutation(() => PermissionType, { name: "deletePermission" })
   @ResponseMessage("Delete a User")
-  remove(@Args('id') id: string, @GqlCurrentUser() currentUser: IUser) {
+  remove(@Args("id") id: string, @GqlCurrentUser() currentUser: IUser) {
     const resp = this.permissionsService.remove(id, currentUser);
     if (resp) {
-      this.findAll()
+      this.findAll();
     }
   }
 }
