@@ -10,17 +10,18 @@ import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
+import { GraphQLResponse } from "../base/dto/graphql-response.dto";
 import { RegisterUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 
-@Resolver(() => UserResponse)
+@Resolver(() => UserType)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => String)
   @Public()
-  async helloo() {
-    return await "User Hello world";
+  helloo() {
+    return "User Hello World"
   }
 
   @Query(() => UserType, { nullable: true })
@@ -52,11 +53,11 @@ export class UsersResolver {
     return this.usersService.searchTerms(regex);
   }
 
-  @UseInterceptors(GraphQLTransformInterceptor<UserResponse>)
   @ResponseMessage("Fetch permissions with paginate")
-  @Query(() => UserResponse, { nullable: true })
-  async findByEmail(@Args("email") email: string) {
-    return await this.usersService.findByEmail(email);
+  @UseInterceptors(GraphQLTransformInterceptor<UserType>)
+  @Query(() => UserResponse)
+  findByEmail(@Args("email") email: string) {
+    return this.usersService.findByEmail(email);
   }
 
   @Mutation(() => UserType)

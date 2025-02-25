@@ -13,22 +13,6 @@ async function bootstrap() {
   const jwtService = app.get(JwtService);
   const usersService = app.get(UsersService);
 
-  /*   app.useGlobalInterceptors({
-    intercept: (context: GqlExecutionContext, next) => {
-      // Check if the request belongs to AuthModule
-      const gqlContext = context.getClass?.();
-      if (gqlContext?.name === "AuthResolver") {
-        return next.handle(); // ✅ Skip the interceptor for AuthModule
-      }
-
-      // ✅ Apply GraphQLTransformInterceptor globally
-      return new GraphQLTransformInterceptor(reflector).intercept(
-        context,
-        next
-      );
-    },
-  }); */
-
   const reflector = app.get(Reflector);
   app.useGlobalGuards(
     new JwtAuthGuard(reflector, jwtService, usersService, configService)

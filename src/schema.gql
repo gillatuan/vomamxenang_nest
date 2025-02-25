@@ -75,7 +75,7 @@ type PermissionType {
 }
 
 type Query {
-  findByEmail(email: String!): UserResponse
+  findByEmail(email: String!): UserResponse!
   findOne(id: String!): UserType!
   helloPermissions: String!
   helloo: String!

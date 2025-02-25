@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class GraphQLTransformInterceptor<T> implements NestInterceptor {
+export class GraphQLTransformInterceptor<T> implements NestInterceptor<T, GraphQLResponse> {
   constructor(private reflector: Reflector) {}
 
   intercept(
@@ -23,7 +23,7 @@ export class GraphQLTransformInterceptor<T> implements NestInterceptor {
     const statusCode = httpResponse?.statusCode || 200; // Default to 200 if not set
 
     return next.handle().pipe(
-      map((data) => {
+      map((data: T) => {
         return {
           statusCode,
           message:
@@ -31,7 +31,7 @@ export class GraphQLTransformInterceptor<T> implements NestInterceptor {
               RESPONSE_MESSAGE,
               context.getHandler(),
             ) || '',
-          data: data !== undefined && data !== null ? data : null,  // ✅ Ensure data is not undefined
+          data: data ?? null,  // ✅ Ensure data is not undefined
         };
       }),
     );
