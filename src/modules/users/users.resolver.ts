@@ -18,10 +18,13 @@ import { UpdateUserInput } from "./dto/update-user.input";
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => String)
+  @UseInterceptors(GraphQLTransformInterceptor<String>)
+  @Query(() => UserResponse)
   @Public()
   helloo() {
-    return "User Hello World"
+    return {
+      email: "User Hello World"
+    }
   }
 
   @Query(() => UserType, { nullable: true })
@@ -54,7 +57,6 @@ export class UsersResolver {
   }
 
   @ResponseMessage("Fetch permissions with paginate")
-  @UseInterceptors(GraphQLTransformInterceptor<UserType>)
   @Query(() => UserResponse)
   findByEmail(@Args("email") email: string) {
     return this.usersService.findByEmail(email);

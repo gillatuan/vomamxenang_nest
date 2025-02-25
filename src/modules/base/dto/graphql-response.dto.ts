@@ -1,8 +1,8 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class GraphQLResponse {
-  @Field(() => Number)
+  @Field(() => Int)
   statusCode: number;
 
   @Field(() => String)

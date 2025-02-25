@@ -78,7 +78,7 @@ type Query {
   findByEmail(email: String!): UserResponse!
   findOne(id: String!): UserType!
   helloPermissions: String!
-  helloo: String!
+  helloo: UserResponse!
   listPermissions(qs: String): PermissionPaginationResponse!
   listUsers(qs: String): UserPaginationResponse!
   me: UserType
@@ -152,7 +152,7 @@ type UserResponse {
   data: UserType!
   error: String
   message: String!
-  statusCode: Float!
+  statusCode: Int!
 }
 
 type UserType {
