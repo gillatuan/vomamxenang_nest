@@ -1,22 +1,19 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { Column, ObjectId } from 'typeorm';
-import { RegisterUserInput } from './create-user.input';
-import { RoleEnum } from './user.dto';
+import { ArgsType, Field, InputType, PartialType } from "@nestjs/graphql";
+import { IsOptional } from "class-validator";
+import { RegisterUserInput } from "./create-user.input";
+import { RoleEnum } from "./user.dto";
 
 @InputType()
+@ArgsType()
 export class UpdateUserInput extends PartialType(RegisterUserInput) {
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
+  email?: string;
+
+  @Field({ nullable: true })
   password?: string;
 
-  @Field()
-  isDeleted: boolean;
-
-  @Field()
+  @Field({nullable: true})
+  @IsOptional()
   role?: RoleEnum;
-
-  @Column()
-  deletedBy: {
-    _id: ObjectId;
-    email: string;
-  };
 }

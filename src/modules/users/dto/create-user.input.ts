@@ -9,9 +9,8 @@ import { IsEmail, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { RoleEnum, UserType } from './user.dto';
 
 @InputType()
-@ObjectType()
 @ArgsType()
-export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role'] as const) {
+export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role']) {
   @Field()
   @IsNotEmpty({ message: 'Email ko de trong' })
   @IsEmail({}, { message: 'Email ko dung dinh dang' })
@@ -25,13 +24,11 @@ export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role'] as 
   @IsNotEmpty({ message: 'Address ko de trong' })
   address: string;
 
-  @Field()
+  @Field({defaultValue: "", nullable: true})
+  @IsOptional()
   avatar?: string;
 
   @Field()
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  role?: string;
 }

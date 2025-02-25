@@ -28,7 +28,7 @@ export class RolesService {
       isActive,
       permissions: [],
       createdBy: {
-        _id: user._id,
+        id: user.id,
         email: user.email
       }
     });

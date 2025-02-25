@@ -3,7 +3,6 @@ import { BaseType } from "@/modules/base/dto/base.dto";
 import { GraphQLResponse } from "@/modules/base/dto/graphql-response.dto";
 import { PaginationResponse } from "@/modules/base/dto/pagination.response";
 import { Field, ObjectType } from "@nestjs/graphql";
-import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
 
 export enum RoleEnum {
   Admin = "Admin",
@@ -16,7 +15,7 @@ export class UserType extends BaseType {
   email: string;
 
   @Field()
-  password?: string;
+  password: string;
 
   @Field()
   phone: string;
@@ -28,7 +27,7 @@ export class UserType extends BaseType {
   avatar?: string;
 
   @Field({ nullable: true })
-  role?: string;
+  role?: RoleEnum;
 
   @Field({ defaultValue: false, nullable: true })
   isActive?: boolean;

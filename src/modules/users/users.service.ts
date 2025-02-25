@@ -62,10 +62,10 @@ export class UsersService {
     return paginate<User>(this.userRepository, query);
   }
 
-  async findOne(item: {[key: string]: string}) {
-    const {key} = item
-    if (key === 'id' && !isUUID(key)) {
-      return `not found user`;
+  async findOne(item: { [key: string]: string }) {
+    const { key } = item;
+    if (key === "id" && !isUUID(key)) {
+      throw new BadRequestException(`User Not Found.`);
     }
 
     return await this.userRepository.findOneBy({
@@ -78,7 +78,7 @@ export class UsersService {
     if (!findItem) {
       throw new NotFoundException("Khong ton tai user nay");
     }
-    
+
     return findItem;
   }
 
@@ -92,9 +92,10 @@ export class UsersService {
       const getHashPassword = await setHashPassword(updateUserInput.password);
       updateUserInput.password = getHashPassword;
     }
-    await this.userRepository.update({ id }, { ...updateUserInput });
+    const dataNeedToUpdate = { ...checkExistUser, ...updateUserInput };
+    await this.userRepository.update({ id }, dataNeedToUpdate);
 
-    return updateUserInput
+    return dataNeedToUpdate;
   }
 
   async remove(id: string, currentUser: IUser) {
@@ -105,21 +106,26 @@ export class UsersService {
     const checkUserIsAdmin = await this.userRepository.findOneBy({
       id: currentUser.id,
       role: RoleEnum.Admin,
+      isActive: true,
     });
     if (!checkUserIsAdmin) {
       throw new BadRequestException("Ban khong co quyen xoa");
     }
 
+    const findItem = await this.findOne({ id });
+    const {_id, ...rest} = findItem
+
     const updateUserInput = {
+      ...rest,
       isDeleted: true,
       deletedBy: {
-        _id: checkUserIsAdmin._id,
+        id: checkUserIsAdmin.id,
         email: checkUserIsAdmin.email,
       },
-    }
+    };
 
     await this.userRepository.update({ id }, updateUserInput);
-    return updateUserInput
+    return updateUserInput;
   }
 
   async searchTerms(regex: string) {

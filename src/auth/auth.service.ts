@@ -14,6 +14,7 @@ import {
 } from './dto/auth.dto';
 
 import ms from 'ms';
+import { UserType } from '@/modules/users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async register(authRegisterInput: AuthRegisterInput): Promise<User> {
+  async register(authRegisterInput: AuthRegisterInput): Promise<UserType> {
     return this.userService.register(authRegisterInput);
   }
 

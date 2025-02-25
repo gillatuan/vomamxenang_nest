@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { ObjectType } from "@nestjs/graphql";
 import { IsUUID } from "class-validator";
 import {
   BeforeInsert,
@@ -24,7 +24,7 @@ export class BaseEntity {
   createdAt: Date;
   @Column()
   createdBy: {
-    _id: ObjectId;
+    id: string;
     email: string;
   };
 
@@ -33,7 +33,7 @@ export class BaseEntity {
   updatedAt: Date;
   @Column()
   updatedBy: {
-    _id: ObjectId;
+    id: string;
     email: string;
   };
 
@@ -44,9 +44,9 @@ export class BaseEntity {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @Column()
-  deletedBy: {
-    _id: ObjectId;
+  @Column({ nullable: true })
+  deletedBy?: {
+    id: string;
     email: string;
   };
 

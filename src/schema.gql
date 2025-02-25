@@ -51,11 +51,11 @@ type Mutation {
   createRole(createRoleInput: CreateRoleInput!): RoleType!
   deletePermission(id: String!): PermissionType!
   login(loginInput: LoginInput!): JWTAccessToken!
-  registerUser(registerUserInput: RegisterUserInput!): UserType!
-  removeUser(id: String!): UserType!
+  registerUser(registerUserInput: RegisterUserInput!): UserResponse!
+  removeUser(id: String!): UserResponse!
   updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
   updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleType!
-  updateUser(id: String!, updateUserInput: UpdateUserInput!): UserType!
+  updateUser(id: String!, updateUserInput: UpdateUserInput!): UserResponse!
 }
 
 type PermissionPaginationResponse {
@@ -81,14 +81,14 @@ type Query {
   helloo: UserResponse!
   listPermissions(qs: String): PermissionPaginationResponse!
   listUsers(qs: String): UserPaginationResponse!
-  me: UserType
+  me: UserResponse
   searchTermOfPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
   searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponse!
 }
 
 input RegisterUserInput {
   address: String!
-  avatar: String!
+  avatar: String = ""
   email: String!
   password: String!
   phone: String!
@@ -119,17 +119,17 @@ input UpdateRoleInput {
 
 input UpdateUserInput {
   address: String
-  avatar: String
+  avatar: String = ""
   codeExpired: DateTime
   codeId: String
   email: String
   id: String
   isActive: Boolean = false
-  isDeleted: Boolean!
-  password: String!
+  isDeleted: Boolean = false
+  password: String
   phone: String
   refreshToken: String
-  role: String!
+  role: String
 }
 
 type UserPaginationResponse {

@@ -21,7 +21,7 @@ export class AuthResolver {
   @Public()
   authRegister(
     @Args('authRegisterInput') authRegisterInput: AuthRegisterInput,
-  ): Promise<User> {
+  ): Promise<UserType> {
     return this.authService.register(authRegisterInput);
   }
 

@@ -10,33 +10,53 @@ import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FilterDto } from "../base/dto/filter.dto";
-import { GraphQLResponse } from "../base/dto/graphql-response.dto";
 import { RegisterUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 
+@UseInterceptors(GraphQLTransformInterceptor<UserType>)
 @Resolver(() => UserType)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseInterceptors(GraphQLTransformInterceptor<String>)
   @Query(() => UserResponse)
   @Public()
   helloo() {
     return {
-      email: "User Hello World"
-    }
+      email: "User Hello World",
+    };
   }
 
-  @Query(() => UserType, { nullable: true })
+  @Query(() => UserResponse, { nullable: true })
   me(@GqlCurrentUser() user: User) {
     return user; // Returns the authenticated user
   }
 
-  @Query(() => UserType)
-  findOne(
+  @Mutation(() => UserResponse, { name: "registerUser" })
+  @ResponseMessage("Register User")
+  async registerUser(
+    @Args("registerUserInput") registerUserInput: RegisterUserInput
+  ): Promise<RegisterUserInput> {
+    return await this.usersService.register(registerUserInput);
+  }
+
+  @Mutation(() => UserResponse, { name: "updateUser" })
+  async updateUser(
+    @Args("id") id: string,
+    @Args("updateUserInput") updateUserInput: UpdateUserInput
+  ): Promise<UpdateUserInput> {
+    return await this.usersService.updateUser(id, updateUserInput);
+  }
+
+  @Mutation(() => UserResponse, { name: "removeUser" })
+  async removeUser(
     @Args("id") id: string,
     @GqlCurrentUser() currentUser
-  ): Promise<User | string> {
+  ): Promise<UpdateUserInput> {
+    return await this.usersService.remove(id, currentUser);
+  }
+
+  @Query(() => UserType)
+  findOne(@Args("id") id: string): Promise<UserType> {
     return this.usersService.findOne({ id });
   }
 
@@ -60,28 +80,5 @@ export class UsersResolver {
   @Query(() => UserResponse)
   findByEmail(@Args("email") email: string) {
     return this.usersService.findByEmail(email);
-  }
-
-  @Mutation(() => UserType)
-  async registerUser(
-    @Args("registerUserInput") registerUserInput: RegisterUserInput
-  ): Promise<User> {
-    return await this.usersService.register(registerUserInput);
-  }
-
-  @Mutation(() => UserType)
-  async removeUser(
-    @Args("id") id: string,
-    @GqlCurrentUser() currentUser
-  ): Promise<UpdateUserInput> {
-    return await this.usersService.remove(id, currentUser);
-  }
-
-  @Mutation(() => UserType, { name: "updateUser" })
-  async updateUser(
-    @Args("id") id: string,
-    @Args("updateUserInput") updateUserInput: UpdateUserInput
-  ): Promise<UpdateUserInput> {
-    return await this.usersService.updateUser(id, updateUserInput);
   }
 }

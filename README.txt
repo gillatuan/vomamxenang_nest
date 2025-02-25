@@ -4,23 +4,76 @@ query HelloWorld {
 }
 
 {
-  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiaWQiOiI3NjA5MTg0NC0wN2UxLTQ3MWEtOTQ1ZS1mM2VmMjFjNDYyY2IiLCJlbWFpbCI6InR1YW5hZG1pbkBnbWFpbC5jb20iLCJhdmF0YXIiOiJlcmhyZWhyaCIsImFkZHJlc3MiOiIxMjMgTGUgTG9pIEYzIFEuMSIsImlhdCI6MTczOTg1MTUxNiwiZXhwIjoxODI2MjUxNTE2fQ.dKMajrFSoo4SAexlJ7XH8Ni2YRx11dV9JjLLU4nMOtc"
+  "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0b2tlbiBsb2dpbiIsImlzcyI6ImZyb20gc2VydmVyIiwiaWQiOiI3NjA5MTg0NC0wN2UxLTQ3MWEtOTQ1ZS1mM2VmMjFjNDYyY2IiLCJlbWFpbCI6InR1YW5hZG1pbkBnbWFpbC5jb20iLCJhdmF0YXIiOiJlcmhyZWhyaCIsImFkZHJlc3MiOiIxMjMgTGUgTG9pIEYzIFEuMSIsImlhdCI6MTc0MDM4NDA3NiwiZXhwIjoxODI2Nzg0MDc2fQ.gyy36W2Uh0xOTfYKTNC1v4GTgcV3A0VwEatXdgv67PA"
 }
 
 ``````````
-mutation {
-  registerUser(registerUserInput: RegisterUserInput!) {
-    email
-    role
+query Me {
+  me {
+    statusCode
+    message
+    error
+    data {
+      email
+    }
+  }
+}
+``````````
+mutation RegisterUser($registerUserInput: RegisterUserInput!) {
+  registerUser(registerUserInput: $registerUserInput) {
+    statusCode
+    message
+    error
+    data {
+      email
+      role
+    }
   }
 }
   {
     "registerUserInput": {
-      email: "tuanuser2@gmail.com",
-      password: "123456",
-      phone: "0977757900",
-      address: "123 Le Loi F3 Q.1",
-      avatar:"erhrehrh"
+      "email": "tuanuser2@gmail.com",
+      "password": "123456",
+      "phone": "0977757900",
+      "address": "123 Le Loi F3 Q.1",
+      "avatar":"erhrehrh"
+    }
+  }
+
+``````````
+mutation RemoveUser($id: String!) {
+  removeUser(id: $id) {
+    statusCode
+    message
+    error
+    data {
+      email
+      role
+      isActive
+      isDeleted
+    }
+  }
+}
+  {
+    "id": "c2d57bb5-6d45-453e-afcc-87e2cca17c27"
+  }
+
+``````````
+ mutation UpdateUser($id: String!, $updateUserInput: UpdateUserInput!) {
+  updateUser(id: $id, updateUserInput: $updateUserInput) {
+    statusCode
+    message
+    error
+    data {
+      email
+      role
+    }
+  }
+}
+  {
+    "id": "c2d57bb5-6d45-453e-afcc-87e2cca17c27",
+    "updateUserInput": {
+      "address": "1234 Le loi F3 Q.1"
     }
   }
 
@@ -66,25 +119,4 @@ query FindOne($id: String!) {
 }
   {
     "id": "76091844-07e1-471a-945e-f3ef21c462cb"
-  }
-
-``````````
-mutation RemoveUser($id: String!) {
-  removeUser(id: $id) 
-}
-  {
-    "id": "f474f6e2-27ed-4650-9a1c-7ba796637d22"
-  }
-
-``````````
-mutation UpdateUser($id: String!, $updateUserInput: UpdateUserInput!) {
-  updateUser(id: $id, updateUserInput: $updateUserInput) {
-    email
-  }
-}
-  {
-    "id": "c2d57bb5-6d45-453e-afcc-87e2cca17c27",
-    "updateUserInput": {
-      "address": "1234 Le loi F3 Q.1"
-    }
   }
