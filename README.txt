@@ -78,14 +78,40 @@ mutation RemoveUser($id: String!) {
   }
 
 ``````````
-query ListUsers($qs: String) {
-  listUsers(qs: $qs) {
+query FindOneUser($id: String!) {
+  findOneUser(id: $id) {
+    statusCode
+    message
+    error
     data {
-    	id
       email
+      role
+      isActive
+      isDeleted
     }
-    totalPages
-    total
+  }
+}
+  {
+    "id": "a745bcee-81da-4f9a-b2be-a86ddbc3dfd9"
+  }
+``````````
+query FindAllUsers($qs: String!) {
+  findAllUsers(qs: $qs) {
+    statusCode
+    message
+    error
+    data {
+      total
+      limit
+      skip
+      currentPage
+      totalPages
+      data {
+        id
+        email
+        role
+      }
+    }
   }
 }
   {

@@ -11,7 +11,7 @@ import { isUUID } from "class-validator";
 import { Repository } from "typeorm";
 import { v4 as uuid } from "uuid";
 import { UpdateUserInput } from "./dto/update-user.input";
-import { RoleEnum, UserPaginationResponse } from "./dto/user.dto";
+import { RoleEnum, UserPaginationResponse, UserPaginationResponseInterceptor, UserType } from "./dto/user.dto";
 import { User } from "./entities/user.entity";
 import { IUser } from "./entities/users";
 
@@ -59,7 +59,7 @@ export class UsersService {
   };
 
   async findAll(query: string): Promise<UserPaginationResponse> {
-    return paginate<User>(this.userRepository, query);
+    return paginate<UserType>(this.userRepository, query);
   }
 
   async findOne(item: { [key: string]: string }) {

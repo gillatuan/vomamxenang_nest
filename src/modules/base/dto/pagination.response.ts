@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType({ isAbstract: true }) // Prevents direct schema generation
 export abstract class PaginationResponse {

@@ -75,15 +75,14 @@ type PermissionType {
 }
 
 type Query {
+  findAllUsers(qs: String): UserPaginationResponseInterceptor!
   findByEmail(email: String!): UserResponse!
-  findOne(id: String!): UserType!
+  findOneUser(id: String!): UserResponse!
   helloPermissions: String!
   helloo: UserResponse!
   listPermissions(qs: String): PermissionPaginationResponse!
-  listUsers(qs: String): UserPaginationResponse!
   me: UserResponse
   searchTermOfPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
-  searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponse!
 }
 
 input RegisterUserInput {
@@ -141,6 +140,13 @@ type UserPaginationResponse {
   totalPages: Int!
 }
 
+type UserPaginationResponseInterceptor {
+  data: UserPaginationResponse
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
 type UserPayload {
   address: String!
   avatar: String!
@@ -149,7 +155,7 @@ type UserPayload {
 }
 
 type UserResponse {
-  data: UserType!
+  data: UserType
   error: String
   message: String!
   statusCode: Int!

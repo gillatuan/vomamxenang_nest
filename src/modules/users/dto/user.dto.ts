@@ -50,9 +50,10 @@ export class UserPaginationResponse extends PaginationResponse {
   @Field(() => [UserType])
   data: UserType[]; // The list of items in the current page
 }
+@ObjectType()
+export class UserPaginationResponseInterceptor extends GraphQLResponse.forType(
+  UserPaginationResponse
+) {}
 
 @ObjectType()
-export class UserResponse extends GraphQLResponse {
-  @Field(() => UserType)
-  data: UserType; // The list of items in the current page
-}
+export class UserResponse extends GraphQLResponse.forType(UserType) {}
