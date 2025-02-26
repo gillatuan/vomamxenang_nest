@@ -10,6 +10,7 @@ import { User } from "@/modules/users/entities/user.entity";
 import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { FilterDto } from "../base/dto/filter.dto";
 import { RegisterUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 
@@ -67,18 +68,12 @@ export class UsersResolver {
     return this.usersService.findAll(qs);
   }
 
-  /*   @Query(() => UserPaginationResponse, { name: "searchTermsOfUser" })
+  @Query(() => UserPaginationResponseInterceptor, { name: "searchTermsOfUser" })
   searchTerms(
     @Args("filterDto") filterDto: FilterDto
   ): Promise<UserPaginationResponse> {
     // const regex = `email=/${filterDto.s}/&skip=0&limit=10&sort=-1`
     const regex = filterDto.s;
     return this.usersService.searchTerms(regex);
-  } */
-
-  @ResponseMessage("Fetch permissions with paginate")
-  @Query(() => UserResponse)
-  findByEmail(@Args("email") email: string) {
-    return this.usersService.findByEmail(email);
   }
 }

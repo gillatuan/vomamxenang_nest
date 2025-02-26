@@ -119,30 +119,27 @@ query FindAllUsers($qs: String!) {
   }
 
 ``````````
-query SearchTerms($filterDto: FilterDto!) {
-  searchTerms(filterDto: $filterDto) {
-		data {
-      email
+query SearchTermsOfUser($filterDto: FilterDto!) {
+  searchTermsOfUser(filterDto: $filterDto) {
+		statusCode
+    message
+    error
+    data {
+      total
+      limit
+      skip
+      currentPage
+      totalPages
+      data {
+        id
+        email
+        role
+      }
     }
-    totalPages
-    total
   }
 }
   {
     "filterDto": {
       "s": "email=tuan&skip=0&limit=10&sort=-1"
     }
-  }
-
-``````````
-query FindOne($id: String!) {
-  findOne(id: $id) {
-    email
-    phone
-    id
-    address
-  }
-}
-  {
-    "id": "76091844-07e1-471a-945e-f3ef21c462cb"
   }

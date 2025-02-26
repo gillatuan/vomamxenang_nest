@@ -76,13 +76,13 @@ type PermissionType {
 
 type Query {
   findAllUsers(qs: String): UserPaginationResponseInterceptor!
-  findByEmail(email: String!): UserResponse!
   findOneUser(id: String!): UserResponse!
   helloPermissions: String!
   helloo: UserResponse!
   listPermissions(qs: String): PermissionPaginationResponse!
   me: UserResponse
   searchTermOfPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
+  searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponseInterceptor!
 }
 
 input RegisterUserInput {
