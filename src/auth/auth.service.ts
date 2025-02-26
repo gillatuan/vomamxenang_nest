@@ -1,31 +1,34 @@
-import { User } from '@/modules/users/entities/user.entity';
-import { UsersService } from '@/modules/users/users.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
-import { Response } from 'express';
+import { UsersService } from "@/modules/users/users.service";
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcryptjs";
+import { Response } from "express";
 import {
   AuthPayload,
   AuthRegisterInput,
   JWTAccessToken,
   LoginInput,
   UserPayload,
-} from './dto/auth.dto';
+} from "./dto/auth.dto";
 
-import ms from 'ms';
-import { UserType } from '@/modules/users/dto/user.dto';
+import { UserType } from "@/modules/users/dto/user.dto";
+import { IUser } from "@/modules/users/entities/users";
+import ms from "ms";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
-  async register(authRegisterInput: AuthRegisterInput): Promise<UserType> {
-    return this.userService.register(authRegisterInput);
+  async register(
+    authRegisterInput: AuthRegisterInput,
+    currentUser: IUser
+  ): Promise<UserType> {
+    return this.userService.register(authRegisterInput, currentUser);
   }
 
   async validateUser(loginInput: LoginInput): Promise<AuthPayload> | null {
@@ -48,13 +51,13 @@ export class AuthService {
   }
 
   async createRefreshToken(payload: UserPayload, res: Response) {
-    const expires_in = this.configService.get<string>('JWT_REFRESH_EXPIRED')
+    const expires_in = this.configService.get<string>("JWT_REFRESH_EXPIRED");
     const refresh_token = await this.jwtService.sign(payload, {
       expiresIn: expires_in,
     });
 
     //set refresh_token as cookies
-    res.cookie('refresh_token', refresh_token, {
+    res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       maxAge: ms(expires_in),
     });
@@ -64,19 +67,19 @@ export class AuthService {
 
     return {
       refresh_token,
-      expires_in
-    }
+      expires_in,
+    };
   }
 
   async login(user: AuthPayload, res: Response): Promise<JWTAccessToken> {
     const payload = {
-      sub: 'token login',
-      iss: 'from server',
+      sub: "token login",
+      iss: "from server",
       id: user.id,
       email: user.email,
       // role: user.role,
       avatar: user.avatar,
-      address: user.address
+      address: user.address,
     };
     const dataRefreshToken = await this.createRefreshToken(payload, res);
     const accessToken = await this.createAccessToken(payload);

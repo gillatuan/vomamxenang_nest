@@ -170,7 +170,6 @@ type UserType {
   id: String!
   isActive: Boolean
   isDeleted: Boolean
-  password: String!
   phone: String!
   refreshToken: String!
   role: String

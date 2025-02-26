@@ -1,5 +1,8 @@
 import { GqlCurrentUser, Public, ResponseMessage } from "@/helpers/customize";
 import { GraphQLTransformInterceptor } from "@/lib/graphql.transform.interceptor";
+import { FilterDto } from "@/modules/base/dto/filter.dto";
+import { RegisterUserInput } from "@/modules/users/dto/create-user.input";
+import { UpdateUserInput } from "@/modules/users/dto/update-user.input";
 import {
   UserPaginationResponse,
   UserPaginationResponseInterceptor,
@@ -7,12 +10,10 @@ import {
   UserType,
 } from "@/modules/users/dto/user.dto";
 import { User } from "@/modules/users/entities/user.entity";
+import { IUser } from "@/modules/users/entities/users";
 import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { FilterDto } from "../base/dto/filter.dto";
-import { RegisterUserInput } from "./dto/create-user.input";
-import { UpdateUserInput } from "./dto/update-user.input";
 
 @UseInterceptors(GraphQLTransformInterceptor<UserType>)
 @Resolver(() => UserType)
@@ -35,16 +36,17 @@ export class UsersResolver {
   @Mutation(() => UserResponse, { name: "registerUser" })
   @ResponseMessage("Register User")
   async registerUser(
-    @Args("registerUserInput") registerUserInput: RegisterUserInput
-  ): Promise<RegisterUserInput> {
-    return await this.usersService.register(registerUserInput);
+    @Args("registerUserInput") registerUserInput: RegisterUserInput,
+    @GqlCurrentUser() currentUser: IUser
+  ): Promise<UserType> {
+    return await this.usersService.register(registerUserInput, currentUser);
   }
 
   @Mutation(() => UserResponse, { name: "updateUser" })
   async updateUser(
     @Args("id") id: string,
     @Args("updateUserInput") updateUserInput: UpdateUserInput
-  ): Promise<UpdateUserInput> {
+  ): Promise<UserType> {
     return await this.usersService.updateUser(id, updateUserInput);
   }
 
@@ -52,7 +54,7 @@ export class UsersResolver {
   async removeUser(
     @Args("id") id: string,
     @GqlCurrentUser() currentUser
-  ): Promise<UpdateUserInput> {
+  ): Promise<UserType> {
     return await this.usersService.remove(id, currentUser);
   }
 

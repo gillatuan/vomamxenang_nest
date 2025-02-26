@@ -15,9 +15,6 @@ export class UserType extends BaseType {
   email: string;
 
   @Field()
-  password: string;
-
-  @Field()
   phone: string;
 
   @Field()

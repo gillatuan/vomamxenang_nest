@@ -32,7 +32,7 @@ export class UsersService {
     return false;
   }
 
-  async register(authRegisterInput: AuthRegisterInput): Promise<User> {
+  async register(authRegisterInput: AuthRegisterInput, currentUser: IUser): Promise<UserType> {
     const { email } = authRegisterInput;
 
     // check exist email
@@ -50,6 +50,10 @@ export class UsersService {
       password: hashedPassword,
       isActive: false,
       role: RoleEnum.Member,
+      createdBy: {
+        id: currentUser.id,
+        email: currentUser.email
+      }
     });
     return await this.userRepository.save(newUser);
   }
@@ -92,7 +96,10 @@ export class UsersService {
       const getHashPassword = await setHashPassword(updateUserInput.password);
       updateUserInput.password = getHashPassword;
     }
-    const dataNeedToUpdate = { ...checkExistUser, ...updateUserInput };
+    const dataNeedToUpdate = { ...checkExistUser, ...updateUserInput, updatedBy: {
+      id: checkExistUser.id,
+      email: checkExistUser.email
+    } };
     await this.userRepository.update({ id }, dataNeedToUpdate);
 
     return dataNeedToUpdate;
