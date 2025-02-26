@@ -10,6 +10,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { isUUID } from "class-validator";
 import { Repository } from "typeorm";
 import { v4 as uuid } from "uuid";
+import { Role } from "../roles/entities/role.entity";
 import { UpdateUserInput } from "./dto/update-user.input";
 import { RoleEnum, UserPaginationResponse, UserPaginationResponseInterceptor, UserType } from "./dto/user.dto";
 import { User } from "./entities/user.entity";
@@ -19,7 +20,9 @@ import { IUser } from "./entities/users";
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private readonly roleRepository: Repository<Role>
   ) {}
 
   async isEmailExist(email: string) {
@@ -43,13 +46,17 @@ export class UsersService {
       );
     }
 
+    const findItem = await this.roleRepository.findOneBy({ name: RoleEnum.Member });
     const hashedPassword = await setHashPassword(authRegisterInput.password);
     const newUser = this.userRepository.create({
       ...authRegisterInput,
       id: uuid(),
       password: hashedPassword,
       isActive: false,
-      role: RoleEnum.Member,
+      role: {
+        id: findItem.id,
+        name: findItem.name
+      },
       createdBy: {
         id: currentUser.id,
         email: currentUser.email
@@ -72,8 +79,9 @@ export class UsersService {
       throw new BadRequestException(`User Not Found.`);
     }
 
-    return await this.userRepository.findOneBy({
-      [key]: key,
+    return await this.userRepository.findOne({
+      where: {[key]: key},
+      relations: ['roles', 'role.permissions']
     });
   }
 
@@ -110,9 +118,10 @@ export class UsersService {
       throw new BadRequestException("Id ko dung dinh dang");
     }
 
+    const findRole = await this.roleRepository.findOneBy({ name: RoleEnum.Member });
     const checkUserIsAdmin = await this.userRepository.findOneBy({
       id: currentUser.id,
-      role: RoleEnum.Admin,
+      role: findRole,
       isActive: true,
     });
     if (!checkUserIsAdmin) {

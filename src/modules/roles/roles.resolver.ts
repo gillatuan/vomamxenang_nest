@@ -1,15 +1,25 @@
 import { ResponseMessage, GqlCurrentUser } from "@/helpers/customize";
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { GraphQLTransformInterceptor } from "@/lib/graphql.transform.interceptor";
+import { UseInterceptors } from "@nestjs/common";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { IUser } from "../users/entities/users";
 import { CreateRoleInput } from "./dto/create-role.input";
-import { RoleType } from "./dto/role.dto";
+import { RolePaginationResponse, RolePaginationResponseInterceptor, RoleType } from "./dto/role.dto";
 import { UpdateRoleInput } from "./dto/update-role.input";
 import { Role } from "./entities/role.entity";
 import { RolesService } from "./roles.service";
 
-@Resolver(() => Role)
+@UseInterceptors(GraphQLTransformInterceptor<RoleType>)
+@Resolver(() => RoleType)
 export class RolesResolver {
   constructor(private readonly rolesService: RolesService) {}
+
+  @Query(() => RolePaginationResponseInterceptor, { name: "findAllRoles" })
+  findAll(
+    @Args("qs", { nullable: true }) qs?: string
+  ): Promise<RolePaginationResponse> {
+    return this.rolesService.findAll(qs);
+  }
 
   @Mutation(() => RoleType, { name: "createRole" })
   @ResponseMessage("Create a new permission")

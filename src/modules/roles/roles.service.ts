@@ -1,9 +1,11 @@
+import { paginate } from "@/helpers/pagination.util";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { isUUID } from "class-validator";
-import { MongoRepository } from "typeorm";
+import { Repository } from "typeorm";
 import { IUser } from "../users/entities/users";
 import { CreateRoleInput } from "./dto/create-role.input";
+import { RolePaginationResponse, RoleType } from "./dto/role.dto";
 import { UpdateRoleInput } from "./dto/update-role.input";
 import { Role } from "./entities/role.entity";
 
@@ -11,8 +13,12 @@ import { Role } from "./entities/role.entity";
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private readonly roleRepository: MongoRepository<Role>
+    private readonly roleRepository: Repository<Role>
   ) {}
+
+  async findAll(query: string): Promise<RolePaginationResponse> {
+    return paginate<RoleType>(this.roleRepository, query);
+  }
 
   async create(createRoleInput: CreateRoleInput, user: IUser) {
     const { name, description, isActive } = createRoleInput;
@@ -21,7 +27,7 @@ export class RolesService {
     if (isExist) {
       throw new BadRequestException(`Role với name="${name}" đã tồn tại!`);
     }
-    
+
     const newRole = await this.roleRepository.create({
       name,
       description,
@@ -29,8 +35,8 @@ export class RolesService {
       permissions: [],
       createdBy: {
         id: user.id,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
 
     return await this.roleRepository.save(newRole);
@@ -58,17 +64,15 @@ export class RolesService {
     const dataNeedToUpdate = {
       ...findItem,
       ...updateItemInput,
-    }
+    };
 
-    await this.roleRepository.updateOne(
+    await this.roleRepository.update(
       { id },
       {
-        $set: {
-          ...updateItemInput,
-          updatedBy: {
-            _id: user._id,
-            email: user.email,
-          },
+        ...updateItemInput,
+        updatedBy: {
+          id: user.id,
+          email: user.email,
         },
       }
     );

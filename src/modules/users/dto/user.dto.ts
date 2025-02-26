@@ -2,6 +2,7 @@
 import { BaseType } from "@/modules/base/dto/base.dto";
 import { GraphQLResponse } from "@/modules/base/dto/graphql-response.dto";
 import { PaginationResponse } from "@/modules/base/dto/pagination.response";
+import { RoleType } from "@/modules/roles/dto/role.dto";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 export enum RoleEnum {
@@ -23,8 +24,11 @@ export class UserType extends BaseType {
   @Field({ defaultValue: "", nullable: true })
   avatar?: string;
 
-  @Field({ nullable: true })
-  role?: RoleEnum;
+  @Field(() => RoleType, { nullable: true })
+  role?: {
+    id: string;
+    name: string;
+  };
 
   @Field({ defaultValue: false, nullable: true })
   isActive?: boolean;

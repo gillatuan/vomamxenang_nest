@@ -1,5 +1,9 @@
 import { BaseEntity } from "@/modules/base/entity/base.entity";
-import { Column, Entity } from "typeorm";
+import { Permission } from "@/modules/permissions/entities/permission.entity";
+import { RoleType } from "@/modules/roles/dto/role.dto";
+import { Role } from "@/modules/roles/entities/role.entity";
+import { Field } from "@nestjs/graphql";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { RoleEnum } from "../dto/user.dto";
 
 @Entity({ name: "users" })
@@ -22,8 +26,12 @@ export class User extends BaseEntity {
   @Column()
   avatar: string;
 
-  @Column()
-  role: RoleEnum;
+  @ManyToOne(() => Role, (role) => role.users, { eager: true }) 
+  @Field(() => Role)
+  role: {
+    id: string;
+    name: string;
+  };
 
   @Column({ default: false })
   isActive?: boolean;

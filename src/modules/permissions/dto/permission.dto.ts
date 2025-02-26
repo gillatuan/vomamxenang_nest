@@ -6,15 +6,13 @@ import { IsNotEmpty, IsOptional } from "class-validator";
 @ObjectType()
 @ArgsType()
 export class PermissionType extends BaseType {
-  @Field({nullable: true})
-  name?: string;
+  @Field()
+  name: string;
 
   @Field()
-  @IsNotEmpty({ message: "method không được để trống" })
   method: string;
 
   @Field()
-  @IsNotEmpty({ message: "module không được để trống" })
   module: string;
 }
 

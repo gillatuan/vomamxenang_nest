@@ -68,13 +68,14 @@ type PermissionPaginationResponse {
 }
 
 type PermissionType {
-  id: String!
+  id: String
   method: String!
   module: String!
-  name: String
+  name: String!
 }
 
 type Query {
+  findAllRoles(qs: String): RolePaginationResponseInterceptor!
   findAllUsers(qs: String): UserPaginationResponseInterceptor!
   findOneUser(id: String!): UserResponse!
   helloPermissions: String!
@@ -93,9 +94,25 @@ input RegisterUserInput {
   phone: String!
 }
 
+type RolePaginationResponse {
+  currentPage: Int!
+  data: [RoleType!]!
+  limit: Int!
+  skip: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type RolePaginationResponseInterceptor {
+  data: RolePaginationResponse
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
 type RoleType {
   description: String!
-  id: String!
+  id: String
   isActive: Boolean!
   name: String!
   permissions: [PermissionType!]!
@@ -128,7 +145,7 @@ input UpdateUserInput {
   password: String
   phone: String
   refreshToken: String
-  role: String
+  role: CreateRoleInput
 }
 
 type UserPaginationResponse {
@@ -167,10 +184,10 @@ type UserType {
   codeExpired: DateTime!
   codeId: String!
   email: String!
-  id: String!
+  id: String
   isActive: Boolean
   isDeleted: Boolean
   phone: String!
   refreshToken: String!
-  role: String
+  role: RoleType
 }
