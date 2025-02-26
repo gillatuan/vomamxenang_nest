@@ -17,3 +17,15 @@ export class CreatePermissionInput extends CreateInput {
   @IsNotEmpty({ message: "module không được để trống" })
   module: string;
 }
+
+@InputType()
+export class CreatePermissionToValidate extends CreateInput {
+  @Field({nullable: true})
+  name?: string;
+
+  @Field({nullable: true})
+  method?: string;
+
+  @Field({nullable: true})
+  module?: string;
+}

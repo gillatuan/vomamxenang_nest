@@ -16,12 +16,18 @@ input CreatePermissionInput {
   name: String!
 }
 
+input CreatePermissionToValidate {
+  id: String
+  method: String
+  module: String
+  name: String
+}
+
 input CreateRoleInput {
   description: String!
   id: String
   isActive: Boolean!
   name: String!
-  permissions: [CreatePermissionInput!]! = []
 }
 
 """
@@ -54,7 +60,7 @@ type Mutation {
   registerUser(registerUserInput: RegisterUserInput!): UserResponse!
   removeUser(id: String!): UserResponse!
   updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
-  updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleType!
+  updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleResponse!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): UserResponse!
 }
 
@@ -72,6 +78,13 @@ type PermissionType {
   method: String!
   module: String!
   name: String!
+}
+
+type PermissionTypeToValidate {
+  id: String
+  method: String
+  module: String
+  name: String
 }
 
 type Query {
@@ -110,12 +123,19 @@ type RolePaginationResponseInterceptor {
   statusCode: Int!
 }
 
+type RoleResponse {
+  data: RoleType
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
 type RoleType {
   description: String!
   id: String
   isActive: Boolean!
   name: String!
-  permissions: [PermissionType!]!
+  permissions: [PermissionTypeToValidate!]!
 }
 
 input UpdatePermissionInput {
@@ -130,7 +150,7 @@ input UpdateRoleInput {
   id: String
   isActive: Boolean
   name: String
-  permissions: [CreatePermissionInput!] = []
+  permissions: [CreatePermissionToValidate!] = []
 }
 
 input UpdateUserInput {

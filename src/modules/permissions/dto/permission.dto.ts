@@ -15,6 +15,17 @@ export class PermissionType extends BaseType {
   @Field()
   module: string;
 }
+@ObjectType()
+export class PermissionTypeToValidate extends BaseType {
+  @Field({nullable: true})
+  name?: string;
+
+  @Field({nullable: true})
+  method?: string;
+
+  @Field({nullable: true})
+  module?: string;
+}
 
 @ObjectType()
 export class PermissionPaginationResponse extends PaginationResponse {

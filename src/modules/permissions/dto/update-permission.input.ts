@@ -9,8 +9,9 @@ export class UpdatePermissionInput extends PartialType(CreatePermissionInput) {
   name?: string;
 
   @Field({ nullable: true })
-  method: string;
+  @IsOptional()
+  method?: string;
 
   @Field({ nullable: true })
-  module: string;
+  module?: string;
 }

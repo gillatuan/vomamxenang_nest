@@ -4,7 +4,12 @@ import { UseInterceptors } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { IUser } from "../users/entities/users";
 import { CreateRoleInput } from "./dto/create-role.input";
-import { RolePaginationResponse, RolePaginationResponseInterceptor, RoleType } from "./dto/role.dto";
+import {
+  RolePaginationResponse,
+  RolePaginationResponseInterceptor,
+  RoleResponse,
+  RoleType,
+} from "./dto/role.dto";
 import { UpdateRoleInput } from "./dto/update-role.input";
 import { Role } from "./entities/role.entity";
 import { RolesService } from "./roles.service";
@@ -30,7 +35,7 @@ export class RolesResolver {
     return this.rolesService.create(createRoleInput, currentUser);
   }
 
-  @Mutation(() => RoleType, { name: "updateRole" })
+  @Mutation(() => RoleResponse, { name: "updateRole" })
   async updateItem(
     @Args("id") id: string,
     @Args("updateItemInput") updateItemInput: UpdateRoleInput,

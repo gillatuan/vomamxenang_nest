@@ -1,5 +1,6 @@
 import { CreateInput } from "@/modules/base/dto/create.input";
 import { CreatePermissionInput } from "@/modules/permissions/dto/create-permission.input";
+import { PermissionType } from "@/modules/permissions/dto/permission.dto";
 import { Field, InputType } from "@nestjs/graphql";
 import { IsArray, IsBoolean, IsNotEmpty } from "class-validator";
 
@@ -18,7 +19,6 @@ export class CreateRoleInput extends CreateInput {
   @IsBoolean({ message: "isActive có giá trị boolean" })
   isActive: boolean;
 
-  @Field(() => [CreatePermissionInput], { defaultValue: [] }) // ✅ Explicitly define the GraphQL type
-  @IsArray({ message: "permissions có định dạng là array" })
-  permissions: CreatePermissionInput[];
+ /*  @Field(() => [CreatePermissionInput], { defaultValue: [] }) // ✅ Explicitly define the GraphQL type
+  permissions: CreatePermissionInput[]; */
 }
