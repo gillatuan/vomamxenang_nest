@@ -1,0 +1,150 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AuthRegisterInput {
+  address: String!
+  email: String!
+  password: String!
+  phone: String!
+}
+
+input CreateRoleInput {
+  description: String!
+  id: String
+  isActive: Boolean!
+  name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type JWTAccessToken {
+  access_expire: String!
+  access_token: String!
+  refresh_token: String!
+  user: UserPayload!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  authRegister(authRegisterInput: AuthRegisterInput!): UserType!
+  createRole(createRoleInput: CreateRoleInput!): RoleResponse!
+  login(loginInput: LoginInput!): JWTAccessToken!
+  registerUser(registerUserInput: RegisterUserInput!): UserResponse!
+}
+
+type Query {
+  findAllUsers1(qs: String): UserPaginationResponseInterceptor!
+  helloo: UserResponse!
+}
+
+input RegisterUserInput {
+  address: String!
+  avatar: String = ""
+  email: String!
+  password: String!
+  phone: String!
+}
+
+type Role {
+  description: String!
+  isActive: Boolean!
+  name: String!
+  users: [User!]
+}
+
+type RolePaginationResponse {
+  currentPage: Int!
+  data: [RoleType!]!
+  limit: Int!
+  skip: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type RoleResponse {
+  data: RoleType
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
+type RoleType {
+  createdAt: DateTime!
+  createdBy: UserType
+  deletedAt: DateTime!
+  deletedBy: UserType
+  description: String!
+  id: String
+  isActive: Boolean!
+  isDeleted: Boolean!
+  name: String!
+  updatedAt: DateTime!
+  updatedBy: UserType
+  users: [User!]
+}
+
+type User {
+  address: String!
+  avatar: String!
+  codeExpired: DateTime!
+  codeId: String!
+  email: String!
+  isActive: Boolean!
+  password: String!
+  phone: String!
+  providerId: String!
+  refreshToken: String!
+  role: Role
+}
+
+type UserPaginationResponse {
+  currentPage: Int!
+  data: [UserType!]!
+  limit: Int!
+  skip: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type UserPaginationResponseInterceptor {
+  data: UserPaginationResponse
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
+type UserPayload {
+  address: String!
+  avatar: String!
+  email: String!
+  id: String!
+}
+
+type UserResponse {
+  data: UserType
+  error: String
+  message: String!
+  statusCode: Int!
+}
+
+type UserType {
+  address: String!
+  avatar: String
+  codeExpired: DateTime!
+  codeId: String!
+  email: String!
+  id: String
+  isActive: Boolean
+  isDeleted: Boolean
+  phone: String!
+  refreshToken: String!
+  role: Role!
+}

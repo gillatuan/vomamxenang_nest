@@ -1,0 +1,3 @@
+Error: Cannot determine a GraphQL input type ("PermissionType") for the "permissions". 
+Make sure your class is decorated with an appropriate decorator.
+==> Cause is using the type query. Should use input query
