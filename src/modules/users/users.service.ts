@@ -1,6 +1,9 @@
 import { AuthRegisterInput } from "@/auth/dto/auth.dto";
 import { paginate } from "@/helpers/pagination.util";
 import { setHashPassword } from "@/helpers/utils";
+import { UpdateUserInput } from "@/modules/users/dto/update-user.input";
+import { User } from "@/modules/users/entities/user.entity";
+import { IUser } from "@/modules/users/entities/users.d";
 import {
   BadRequestException,
   Injectable,
@@ -9,12 +12,8 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { isUUID } from "class-validator";
 import { Repository } from "typeorm";
-import { v4 as uuid } from "uuid";
 import { Role } from "../roles/entities/role.entity";
-import { UpdateUserInput } from "./dto/update-user.input";
-import { RoleEnum, UserPaginationResponse, UserPaginationResponseInterceptor, UserType } from "./dto/user.dto";
-import { User } from "./entities/user.entity";
-import { IUser } from "./entities/users";
+import { RoleEnum, UserPaginationResponse, UserType } from "./dto/user.dto";
 
 @Injectable()
 export class UsersService {
@@ -35,7 +34,10 @@ export class UsersService {
     return false;
   }
 
-  async register(authRegisterInput: AuthRegisterInput, currentUser: IUser): Promise<UserType> {
+  async register(
+    authRegisterInput: AuthRegisterInput,
+    currentUser: IUser
+  ): Promise<UserType> {
     const { email } = authRegisterInput;
 
     // check exist email
@@ -46,43 +48,21 @@ export class UsersService {
       );
     }
 
-    const findItem = await this.roleRepository.findOneBy({ name: RoleEnum.Member });
+    /* const findItem = await this.roleRepository.findOneBy({
+      name: RoleEnum.Member,
+    }); */
     const hashedPassword = await setHashPassword(authRegisterInput.password);
     const newUser = this.userRepository.create({
       ...authRegisterInput,
-      id: uuid(),
       password: hashedPassword,
       isActive: false,
-      role: {
-        id: findItem.id,
-        name: findItem.name
-      },
+      // role: findItem,
       createdBy: {
         id: currentUser.id,
-        email: currentUser.email
-      }
+        email: currentUser.email,
+      },
     });
     return await this.userRepository.save(newUser);
-  }
-
-  updateUserToken = async (refreshToken: string, id: string) => {
-    return await this.userRepository.update({ id }, { refreshToken });
-  };
-
-  async findAll(query: string): Promise<UserPaginationResponse> {
-    return paginate<UserType>(this.userRepository, query);
-  }
-
-  async findOne(item: { [key: string]: string }) {
-    const { key } = item;
-    if (key === "id" && !isUUID(key)) {
-      throw new BadRequestException(`User Not Found.`);
-    }
-
-    return await this.userRepository.findOne({
-      where: {[key]: key},
-      relations: ['roles', 'role.permissions']
-    });
   }
 
   async findByEmail(email: string) {
@@ -92,6 +72,26 @@ export class UsersService {
     }
 
     return findItem;
+  }
+
+  updateUserToken = async (refreshToken: string, id: string) => {
+    return await this.userRepository.update({ id }, { refreshToken });
+  };
+
+  async findOne(item: { [key: string]: string }) {
+    const { key } = item;
+    if (key === "id" && !isUUID(key)) {
+      throw new BadRequestException(`User Not Found.`);
+    }
+
+    return await this.userRepository.findOne({
+      where: { [key]: key },
+      relations: ["roles", "role.permissions"],
+    });
+  }
+
+  async findAll(query: string): Promise<UserPaginationResponse> {
+    return paginate<UserType>(this.userRepository, query);
   }
 
   async updateUser(id: string, updateUserInput: UpdateUserInput) {
@@ -104,10 +104,18 @@ export class UsersService {
       const getHashPassword = await setHashPassword(updateUserInput.password);
       updateUserInput.password = getHashPassword;
     }
-    const dataNeedToUpdate = { ...checkExistUser, ...updateUserInput, updatedBy: {
-      id: checkExistUser.id,
-      email: checkExistUser.email
-    } };
+
+    const role = await this.roleRepository.findOneBy({name: RoleEnum.SuperAdmin})
+
+    const dataNeedToUpdate = {
+      ...checkExistUser,
+      ...updateUserInput,
+      role,
+      updatedBy: {
+        id: checkExistUser.id,
+        email: checkExistUser.email,
+      },
+    };
     await this.userRepository.update({ id }, dataNeedToUpdate);
 
     return dataNeedToUpdate;
@@ -118,10 +126,12 @@ export class UsersService {
       throw new BadRequestException("Id ko dung dinh dang");
     }
 
-    const findRole = await this.roleRepository.findOneBy({ name: RoleEnum.Member });
+    const findRole = await this.roleRepository.findOneBy({
+      name: RoleEnum.Member,
+    });
     const checkUserIsAdmin = await this.userRepository.findOneBy({
       id: currentUser.id,
-      role: findRole,
+      // role: findRole,
       isActive: true,
     });
     if (!checkUserIsAdmin) {
@@ -129,7 +139,7 @@ export class UsersService {
     }
 
     const findItem = await this.findOne({ id });
-    const {_id, ...rest} = findItem
+    const { _id, ...rest } = findItem;
 
     const updateUserInput = {
       ...rest,
@@ -147,4 +157,16 @@ export class UsersService {
   async searchTerms(regex: string) {
     return await this.findAll(regex);
   }
+
+  findUserByToken = async (refreshToken: string) => {
+    return await this.userRepository.findOne({
+      where: { refreshToken },
+      relations: ["role"],
+     /*  select: {
+        role: {
+          name: true,
+        },
+      }, */
+    });
+  };
 }

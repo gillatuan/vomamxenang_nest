@@ -1,17 +1,24 @@
 // user.dto.ts
-import { BaseType } from "@/modules/base/dto/base.dto";
-import { GraphQLResponse } from "@/modules/base/dto/graphql-response.dto";
-import { PaginationResponse } from "@/modules/base/dto/pagination.response";
-import { RoleType } from "@/modules/roles/dto/role.dto";
+import { BaseType } from "@/base/dto/base.dto";
+import { GraphQLResponse } from "@/base/dto/graphql-response.dto";
+import { PaginationResponse } from "@/base/dto/pagination.response";
+import { Role } from "@/modules/roles/entities/role.entity";
+// import { RoleType } from "@/roles/dto/role.dto";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { IsOptional } from "class-validator";
+import { ManyToOne } from "typeorm";
 
 export enum RoleEnum {
-  Admin = "Admin",
-  Member = "Member",
+  SuperAdmin = "SUPER_ADMIN",
+  Admin = "ADMIN",
+  Member = "MEMBER",
 }
 
 @ObjectType()
-export class UserType extends BaseType {
+export class UserType {
+  @Field({ nullable: true })
+  id?: string;
+
   @Field()
   email: string;
 
@@ -24,11 +31,9 @@ export class UserType extends BaseType {
   @Field({ defaultValue: "", nullable: true })
   avatar?: string;
 
-  @Field(() => RoleType, { nullable: true })
-  role?: {
-    id: string;
-    name: string;
-  };
+/*   @Field(() => Role, {nullable: true})
+  @IsOptional()
+  role?: Role; */
 
   @Field({ defaultValue: false, nullable: true })
   isActive?: boolean;

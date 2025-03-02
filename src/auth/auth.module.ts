@@ -2,6 +2,7 @@ import { AuthResolver } from '@/auth/auth.resolver';
 import { AuthService } from '@/auth/auth.service';
 import { JwtStrategy } from '@/auth/passport/jwt.strategy';
 import { LocalStrategy } from '@/auth/passport/local.strategy';
+import { RolesModule } from '@/modules/roles/roles.module';
 import { UsersModule } from '@/modules/users/users.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -12,6 +13,7 @@ import { PassportModule } from '@nestjs/passport';
   imports: [
     UsersModule,
     PassportModule,
+    RolesModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

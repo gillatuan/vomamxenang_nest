@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { join } from "path";
-import { PermissionsModule } from "./modules/permissions/permissions.module";
+// import { PermissionsModule } from "./modules/permissions/permissions.module";
 import { RolesModule } from "./modules/roles/roles.module";
 
 @Module({
@@ -31,7 +31,7 @@ import { RolesModule } from "./modules/roles/roles.module";
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     AuthModule,
-    PermissionsModule,
+    // PermissionsModule,
     RolesModule,
   ],
 })

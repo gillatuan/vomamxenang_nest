@@ -1,5 +1,5 @@
 import { UsersService } from "@/modules/users/users.service";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
@@ -15,13 +15,15 @@ import {
 import { UserType } from "@/modules/users/dto/user.dto";
 import { IUser } from "@/modules/users/entities/users";
 import ms from "ms";
+import { RolesService } from "@/modules/roles/roles.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
+    private readonly rolesService: RolesService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   async register(
@@ -51,8 +53,10 @@ export class AuthService {
   }
 
   async createRefreshToken(payload: UserPayload, res: Response) {
+
     const expires_in = this.configService.get<string>("JWT_REFRESH_EXPIRED");
     const refresh_token = await this.jwtService.sign(payload, {
+      secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
       expiresIn: expires_in,
     });
 
@@ -97,5 +101,43 @@ export class AuthService {
         // permissions
       },
     };
+  }
+
+  processNewToken = async (refreshToken: string, response: Response) => {
+      try {
+          this.jwtService.verify(refreshToken, {
+              secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET")
+          })
+          let user = await this.userService.findUserByToken(refreshToken);
+          if (user) {
+              const { avatar, id, email } = user;
+              const payload = {
+                  sub: "token refresh",
+                  iss: "from server",
+                  avatar,
+                  id,
+                  email,
+                  // role
+              };
+
+              const refreshToken = await this.createRefreshToken(payload, response);
+
+              return {
+                  access_token: this.jwtService.sign(payload),
+                  refresh_token: refreshToken.refresh_token,
+                  user: {
+                      id,
+                      name,
+                      email,
+                      // role,
+                      // permissions: temp?.permissions ?? []
+                  }
+              };
+          } else {
+              throw new BadRequestException(`Refresh token không hợp lệ. Vui lòng login.`)
+          }
+      } catch (error) {
+          throw new BadRequestException(`Refresh token không hợp lệ. Vui lòng login.`)
+      }
   }
 }

@@ -9,25 +9,12 @@ input AuthRegisterInput {
   phone: String!
 }
 
-input CreatePermissionInput {
-  id: String
-  method: String!
-  module: String!
-  name: String!
-}
-
-input CreatePermissionToValidate {
-  id: String
-  method: String
-  module: String
-  name: String
-}
-
 input CreateRoleInput {
   description: String!
   id: String
   isActive: Boolean!
   name: String!
+  users: [RegisterUserInput!]
 }
 
 """
@@ -53,49 +40,19 @@ input LoginInput {
 
 type Mutation {
   authRegister(authRegisterInput: AuthRegisterInput!): UserType!
-  createPermission(createPermissionInput: CreatePermissionInput!): PermissionType!
-  createRole(createRoleInput: CreateRoleInput!): RoleType!
-  deletePermission(id: String!): PermissionType!
+  createRole(createRoleInput: CreateRoleInput!): RoleResponse!
   login(loginInput: LoginInput!): JWTAccessToken!
   registerUser(registerUserInput: RegisterUserInput!): UserResponse!
   removeUser(id: String!): UserResponse!
-  updatePermission(id: String!, updateItemInput: UpdatePermissionInput!): PermissionType!
-  updateRole(id: String!, updateItemInput: UpdateRoleInput!): RoleResponse!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): UserResponse!
 }
 
-type PermissionPaginationResponse {
-  currentPage: Int!
-  data: [PermissionType!]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-  totalPages: Int!
-}
-
-type PermissionType {
-  id: String
-  method: String!
-  module: String!
-  name: String!
-}
-
-type PermissionTypeToValidate {
-  id: String
-  method: String
-  module: String
-  name: String
-}
-
 type Query {
-  findAllRoles(qs: String): RolePaginationResponseInterceptor!
+  account: UserResponse
   findAllUsers(qs: String): UserPaginationResponseInterceptor!
   findOneUser(id: String!): UserResponse!
-  helloPermissions: String!
   helloo: UserResponse!
-  listPermissions(qs: String): PermissionPaginationResponse!
   me: UserResponse
-  searchTermOfPermissions(filterDto: FilterDto!): PermissionPaginationResponse!
   searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponseInterceptor!
 }
 
@@ -105,6 +62,14 @@ input RegisterUserInput {
   email: String!
   password: String!
   phone: String!
+  role: CreateRoleInput
+}
+
+type Role {
+  description: String!
+  isActive: Boolean!
+  name: String!
+  users: [User!]
 }
 
 type RolePaginationResponse {
@@ -116,13 +81,6 @@ type RolePaginationResponse {
   totalPages: Int!
 }
 
-type RolePaginationResponseInterceptor {
-  data: RolePaginationResponse
-  error: String
-  message: String!
-  statusCode: Int!
-}
-
 type RoleResponse {
   data: RoleType
   error: String
@@ -131,26 +89,18 @@ type RoleResponse {
 }
 
 type RoleType {
+  createdAt: DateTime!
+  createdBy: UserType
+  deletedAt: DateTime!
+  deletedBy: UserType
   description: String!
   id: String
   isActive: Boolean!
+  isDeleted: Boolean!
   name: String!
-  permissions: [PermissionTypeToValidate!]!
-}
-
-input UpdatePermissionInput {
-  id: String
-  method: String
-  module: String
-  name: String
-}
-
-input UpdateRoleInput {
-  description: String
-  id: String
-  isActive: Boolean
-  name: String
-  permissions: [CreatePermissionToValidate!] = []
+  updatedAt: DateTime!
+  updatedBy: UserType
+  users: [User!]
 }
 
 input UpdateUserInput {
@@ -166,6 +116,20 @@ input UpdateUserInput {
   phone: String
   refreshToken: String
   role: CreateRoleInput
+}
+
+type User {
+  address: String!
+  avatar: String!
+  codeExpired: DateTime!
+  codeId: String!
+  email: String!
+  isActive: Boolean!
+  password: String!
+  phone: String!
+  providerId: String!
+  refreshToken: String!
+  role: Role
 }
 
 type UserPaginationResponse {
@@ -185,8 +149,8 @@ type UserPaginationResponseInterceptor {
 }
 
 type UserPayload {
-  address: String!
-  avatar: String!
+  address: String
+  avatar: String
   email: String!
   id: String!
 }
@@ -209,5 +173,4 @@ type UserType {
   isDeleted: Boolean
   phone: String!
   refreshToken: String!
-  role: RoleType
 }

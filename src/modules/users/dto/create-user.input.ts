@@ -1,3 +1,4 @@
+import { CreateRoleInput } from '@/modules/roles/dto/create-role.input';
 import {
   ArgsType,
   Field,
@@ -10,7 +11,7 @@ import { RoleEnum, UserType } from './user.dto';
 
 @InputType()
 @ArgsType()
-export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role']) {
+export class RegisterUserInput extends OmitType(UserType, ['avatar']) {
   @Field()
   @IsNotEmpty({ message: 'Email ko de trong' })
   @IsEmail({}, { message: 'Email ko dung dinh dang' })
@@ -31,4 +32,8 @@ export class RegisterUserInput extends OmitType(UserType, ['avatar', 'role']) {
   @Field()
   @IsNotEmpty()
   password: string;
+
+  @Field(() => CreateRoleInput, {nullable: true})
+  @IsOptional()
+  role?: CreateRoleInput;
 }

@@ -1,9 +1,14 @@
-import { BaseEntity } from "@/modules/base/entity/base.entity";
-import { PermissionTypeToValidate } from "@/modules/permissions/dto/permission.dto";
-import { Permission } from "@/modules/permissions/entities/permission.entity";
+import { BaseEntity } from "@/base/entity/base.entity";
+import { RegisterUserInput } from "@/modules/users/dto/create-user.input";
 import { User } from "@/modules/users/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
-import { BeforeInsert, Column, Entity, JoinTable, OneToMany } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
+
+/* @ObjectType()
+export class RoleForeignKey {
+  id: string;
+  name: string;
+} */
 
 @ObjectType()
 @Entity({ name: "roles" })
@@ -16,16 +21,17 @@ export class Role extends BaseEntity {
   @Column()
   description: string;
 
-  @OneToMany(() => Permission, (permission) => permission.role, { cascade: true }) 
+  /*   @OneToMany(() => Permission, (permission) => permission.role, { cascade: true }) 
   @Field(() => [Permission])
   @JoinTable()
   permissions: {
     id: string;
     name: string;
-  }[];
+  }[]; */
 
-  @Field(() => [Permission], { nullable: true })
+  @Field(() => [User], { nullable: true }) // ✅ Define relation explicitly
   @Column()
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 
   @Field()

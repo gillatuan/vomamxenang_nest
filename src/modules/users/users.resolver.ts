@@ -1,22 +1,22 @@
+import { FilterDto } from "@/base/dto/filter.dto";
 import { GqlCurrentUser, Public, ResponseMessage } from "@/helpers/customize";
 import { GraphQLTransformInterceptor } from "@/lib/graphql.transform.interceptor";
-import { FilterDto } from "@/modules/base/dto/filter.dto";
 import { RegisterUserInput } from "@/modules/users/dto/create-user.input";
-import { UpdateUserInput } from "@/modules/users/dto/update-user.input";
+import { User } from "@/modules/users/entities/user.entity";
+import { UsersService } from "@/modules/users/users.service";
+import { UseInterceptors } from "@nestjs/common";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { UpdateUserInput } from "./dto/update-user.input";
 import {
   UserPaginationResponse,
   UserPaginationResponseInterceptor,
   UserResponse,
   UserType,
-} from "@/modules/users/dto/user.dto";
-import { User } from "@/modules/users/entities/user.entity";
-import { IUser } from "@/modules/users/entities/users";
-import { UsersService } from "@/modules/users/users.service";
-import { UseInterceptors } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+} from "./dto/user.dto";
+import { IUser } from "./entities/users.d";
 
 @UseInterceptors(GraphQLTransformInterceptor<UserType>)
-@Resolver(() => UserType)
+@Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 

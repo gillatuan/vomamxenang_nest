@@ -4,7 +4,6 @@ export function GenericField<T>(typeFn: ReturnTypeFunc) {
   return Field(typeFn);
 }
 @ObjectType()
-@ArgsType()
 export class GraphQLResponse {
 
   // ❌ You cannot use @Field(() => T) directly

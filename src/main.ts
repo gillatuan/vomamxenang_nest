@@ -4,7 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory, Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
-import cookieParser from "cookie-parser";
+import * as cookieParser from 'cookie-parser';
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 
 async function bootstrap() {
@@ -25,7 +25,7 @@ async function bootstrap() {
     })
   );
 
-  app.use(cookieParser());
+  app.use(cookieParser.default());
 
   //config cors
   app.enableCors({

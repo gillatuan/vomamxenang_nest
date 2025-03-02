@@ -1,5 +1,5 @@
 import { RESPONSE_MESSAGE } from '@/helpers/customize';
-import { GraphQLResponse } from '@/modules/base/dto/graphql-response.dto';
+import { GraphQLResponse } from '@/base/dto/graphql-response.dto';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';

@@ -72,11 +72,11 @@ export class UserPayload {
   @IsOptional()
   role?: Roles; */
 
-  @Field()
+  @Field({nullable: true})
   @IsOptional()
   address?: string;
 
-  @Field()
+  @Field({nullable: true})
   avatar: string;
 }
 

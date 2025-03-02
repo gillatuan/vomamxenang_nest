@@ -1,4 +1,4 @@
-import { PaginationResponse } from '@/modules/base/dto/pagination.response';
+import { PaginationResponse } from '@/base/dto/pagination.response';
 import aqp from 'api-query-params';
 import {
   FindOptionsOrder,
