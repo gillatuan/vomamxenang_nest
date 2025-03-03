@@ -1,5 +1,5 @@
 import { UsersService } from "@/modules/users/users.service";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
@@ -12,10 +12,10 @@ import {
   UserPayload,
 } from "./dto/auth.dto";
 
+import { setHashPassword } from "@/helpers/utils";
+import { RolesService } from "@/modules/roles/roles.service";
 import { UserType } from "@/modules/users/dto/user.dto";
 import { IUser } from "@/modules/users/entities/users";
-import ms from "ms";
-import { RolesService } from "@/modules/roles/roles.service";
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly rolesService: RolesService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async register(
@@ -39,7 +39,10 @@ export class AuthService {
       return null;
     }
 
-    const isMatch = await bcrypt.compare(loginInput.password, user.password);
+    const isMatch = await bcrypt.compareSync(
+      loginInput.password,
+      user.password
+    );
     if (!isMatch) {
       return null;
     }
@@ -52,8 +55,7 @@ export class AuthService {
     return await this.jwtService.sign(payload);
   }
 
-  async createRefreshToken(payload: UserPayload, res: Response) {
-
+  /*   async createRefreshToken(payload: UserPayload, res: Response) {
     const expires_in = this.configService.get<string>("JWT_REFRESH_EXPIRED");
     const refresh_token = await this.jwtService.sign(payload, {
       secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
@@ -63,7 +65,7 @@ export class AuthService {
     //set refresh_token as cookies
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
-      maxAge: ms(expires_in),
+      maxAge: 1000 * 60 * 60 * 24,
     });
 
     //update user with refresh token
@@ -73,7 +75,7 @@ export class AuthService {
       refresh_token,
       expires_in,
     };
-  }
+  } */
 
   async login(user: AuthPayload, res: Response): Promise<JWTAccessToken> {
     const payload = {
@@ -85,13 +87,11 @@ export class AuthService {
       avatar: user.avatar,
       address: user.address,
     };
-    const dataRefreshToken = await this.createRefreshToken(payload, res);
-    const accessToken = await this.createAccessToken(payload);
-
+    
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refresh_token);
     return {
-      access_token: accessToken,
-      refresh_token: dataRefreshToken.refresh_token,
-      access_expire: dataRefreshToken.expires_in,
+      ...tokens,
       user: {
         id: payload.id,
         email: payload.email,
@@ -103,7 +103,70 @@ export class AuthService {
     };
   }
 
-  processNewToken = async (refreshToken: string, response: Response) => {
+  logout = async (userId: string) => {
+    this.userService.updateUser(userId, { refreshToken: null });
+  }
+
+  refreshTokens = async (userId: string, refreshToken: string) => {
+    const user = await this.userService.findOne({ id: userId });
+    if (!user || !user.refreshToken) {
+      throw new ForbiddenException("Access Denied");
+    }
+
+    const refreshTokenMatches = await bcrypt.compareSync(
+      refreshToken,
+      user.refreshToken
+    );
+    if (!refreshTokenMatches) {
+      throw new ForbiddenException("Access Denied");
+    }
+
+    const tokens = await this.getTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refresh_token);
+
+    return tokens;
+  };
+
+  updateRefreshToken = async (userId: string, refreshToken: string) => {
+    const hashedRefreshToken = await setHashPassword(refreshToken);
+    await this.userService.updateUser(userId, {
+      refreshToken: hashedRefreshToken,
+    });
+  };
+
+  getTokens = async (userId: string, username: string) => {
+    const accessExpired = this.configService.get<string>("JWT_ACCESS_TOKEN_EXPIRED")
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>("JWT_ACCESS_TOKEN_SECRET"),
+          expiresIn: accessExpired,
+        }
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
+          expiresIn: this.configService.get<string>("JWT_REFRESH_TOKEN_EXPIRED"),
+        }
+      ),
+    ]);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      access_expire: accessExpired
+    };
+  };
+
+  /* processNewToken = async (refreshToken: string, response: Response) => {
       try {
           this.jwtService.verify(refreshToken, {
               secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET")
@@ -139,5 +202,5 @@ export class AuthService {
       } catch (error) {
           throw new BadRequestException(`Refresh token không hợp lệ. Vui lòng login.`)
       }
-  }
+  } */
 }

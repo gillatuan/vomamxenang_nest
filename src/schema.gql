@@ -11,7 +11,6 @@ input AuthRegisterInput {
 
 input CreateRoleInput {
   description: String!
-  id: String
   isActive: Boolean!
   name: String!
   users: [RegisterUserInput!]
@@ -39,6 +38,7 @@ input LoginInput {
 }
 
 type Mutation {
+  Logout: JWTAccessToken!
   authRegister(authRegisterInput: AuthRegisterInput!): UserType!
   createRole(createRoleInput: CreateRoleInput!): RoleResponse!
   login(loginInput: LoginInput!): JWTAccessToken!
@@ -52,7 +52,8 @@ type Query {
   findAllUsers(qs: String): UserPaginationResponseInterceptor!
   findOneUser(id: String!): UserResponse!
   helloo: UserResponse!
-  me: UserResponse
+  me: String!
+  refresh: JWTAccessToken
   searchTermsOfUser(filterDto: FilterDto!): UserPaginationResponseInterceptor!
 }
 
@@ -62,11 +63,12 @@ input RegisterUserInput {
   email: String!
   password: String!
   phone: String!
-  role: CreateRoleInput
+  role: UpdateRoleInput
 }
 
 type Role {
   description: String!
+  id: String!
   isActive: Boolean!
   name: String!
   users: [User!]
@@ -100,22 +102,16 @@ type RoleType {
   name: String!
   updatedAt: DateTime!
   updatedBy: UserType
-  users: [User!]
+  users: [UserType!]
+}
+
+input UpdateRoleInput {
+  id: String!
 }
 
 input UpdateUserInput {
-  address: String
-  avatar: String = ""
-  codeExpired: DateTime
-  codeId: String
   email: String
-  id: String
-  isActive: Boolean = false
-  isDeleted: Boolean = false
   password: String
-  phone: String
-  refreshToken: String
-  role: CreateRoleInput
 }
 
 type User {
@@ -173,4 +169,5 @@ type UserType {
   isDeleted: Boolean
   phone: String!
   refreshToken: String!
+  role: Role
 }

@@ -1,13 +1,20 @@
 // import { CreateRoleInput } from "@/modules/roles/dto/create-role.input";
-import { CreateRoleInput } from "@/modules/roles/dto/create-role.input";
-import { Role } from "@/modules/roles/entities/role.entity";
-import { ArgsType, Field, InputType, PartialType } from "@nestjs/graphql";
+import {
+  ArgsType,
+  Field,
+  InputType,
+  OmitType,
+  PartialType,
+} from "@nestjs/graphql";
 import { IsOptional } from "class-validator";
-import { RegisterUserInput } from "./create-user.input";
+import { UserType } from "./user.dto";
 
 @InputType()
 @ArgsType()
-export class UpdateUserInput extends PartialType(RegisterUserInput) {
+export class UpdateUserInput extends OmitType(
+  PartialType(UserType),
+  [] as const
+) {
   @Field({ nullable: true })
   @IsOptional()
   email?: string;

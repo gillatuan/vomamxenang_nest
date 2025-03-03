@@ -31,9 +31,9 @@ export class UserType {
   @Field({ defaultValue: "", nullable: true })
   avatar?: string;
 
-/*   @Field(() => Role, {nullable: true})
+  @Field(() => Role, {nullable: true})
   @IsOptional()
-  role?: Role; */
+  role?: Role;
 
   @Field({ defaultValue: false, nullable: true })
   isActive?: boolean;

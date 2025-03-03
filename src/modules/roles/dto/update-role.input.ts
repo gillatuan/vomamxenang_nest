@@ -1,8 +1,9 @@
-import { User } from '@/modules/users/entities/user.entity';
-import { Field, InputType, PartialType } from '@nestjs/graphql';
-import { OneToMany } from 'typeorm';
-import { CreateRoleInput } from './create-role.input';
+import { Field, InputType, OmitType, PartialType } from "@nestjs/graphql";
+import { CreateRoleInput } from "./create-role.input";
+import { RoleType } from "./role.dto";
 
 @InputType()
-export class UpdateRoleInput extends PartialType(CreateRoleInput) {
+export class UpdateRoleInput extends OmitType(PartialType(RoleType), ['id']) {
+  @Field()
+  id: string; // Sau này sẽ dùng với class-transformer để serialize dữ liệu response
 }

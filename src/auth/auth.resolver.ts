@@ -10,8 +10,16 @@ import { LocalAuthGuard } from "@/auth/guards/local-auth.guard";
 import { GqlCurrentUser, Public, ResponseMessage } from "@/helpers/customize";
 import { UserResponse, UserType } from "@/modules/users/dto/user.dto";
 import { IUser } from "@/modules/users/entities/users";
-import { Req, Res, UseGuards } from "@nestjs/common";
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { UseGuards } from "@nestjs/common";
+import {
+  Args,
+  Context,
+  GqlExecutionContext,
+  Mutation,
+  Query,
+  Resolver,
+} from "@nestjs/graphql";
+import { Response } from "express";
 
 @Resolver()
 export class AuthResolver {
@@ -31,10 +39,21 @@ export class AuthResolver {
   @UseGuards(LocalAuthGuard)
   login(
     @Args("loginInput") loginInput: LoginInput,
-    @Context("res") res
+    @Context() context
   ): Promise<JWTAccessToken> {
-    const userPayload = res.req.user as AuthPayload;
+    const res: Response = context.res; // ✅ This works!
+    const userPayload = context.req.user as AuthPayload;
     return this.authService.login(userPayload, res);
+  }
+
+  @Public()
+  @ResponseMessage("Logout")
+  @Mutation(() => JWTAccessToken, { name: "Logout" })
+  @UseGuards(LocalAuthGuard)
+  logout(@Context() context) {
+    const userPayload = context.req.user as AuthPayload;
+
+    return this.authService.logout(userPayload.id);
   }
 
   @ResponseMessage("Get user information")
@@ -47,8 +66,10 @@ export class AuthResolver {
 
   @Public()
   @ResponseMessage("Get User by refresh token")
-  getRefreshToken(@Req() req, @Res() res) {
-    const refreshToken = req.cookies["refresh_token"];
-    return this.authService.processNewToken(refreshToken, res);
+  @Query(() => JWTAccessToken, { name: "refresh", nullable: true })
+  getRefreshToken(@Context() context) {
+    const res = GqlExecutionContext.create(context).getContext().res;
+    const refreshToken = context.req.cookie["refresh_token"];
+    return this.authService.getTokens(refreshToken, res);
   }
 }

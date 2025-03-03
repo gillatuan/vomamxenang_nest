@@ -29,3 +29,10 @@ export const GqlCurrentUser = createParamDecorator(
     return ctx.req.user; // Extract user from GraphQL context
   }
 );
+
+export const GqlCookie = createParamDecorator(
+  (data: unknown, context: ExecutionContext) => {
+    const ctx = GqlExecutionContext.create(context).getContext();
+    return ctx.req.cookies; // Extract user from GraphQL context
+  }
+);

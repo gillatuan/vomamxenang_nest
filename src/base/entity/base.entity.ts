@@ -5,19 +5,22 @@ import {
   BeforeUpdate,
   Column,
   CreateDateColumn,
+  Entity,
   ObjectId,
   ObjectIdColumn,
+  PrimaryColumn,
 } from "typeorm";
 import { v4 as uuid } from "uuid";
 
-ObjectType();
+@ObjectType()
+@Entity()
 export class BaseEntity {
   @ObjectIdColumn()
   _id: ObjectId;
 
-  @Column({ nullable: true })
+  @PrimaryColumn()
   @IsUUID()
-  id?: string; // Sau này sẽ dùng với class-transformer để serialize dữ liệu response
+  id: string; // Sau này sẽ dùng với class-transformer để serialize dữ liệu response
 
   @Column()
   @CreateDateColumn({ type: "timestamp" }) // Auto set on insert
@@ -44,8 +47,8 @@ export class BaseEntity {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @Column({ nullable: true })
-  deletedBy?: {
+  @Column()
+  deletedBy: {
     id: string;
     email: string;
   };

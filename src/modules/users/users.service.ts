@@ -44,7 +44,7 @@ export class UsersService {
     const isExist = await this.isEmailExist(email);
     if (isExist) {
       throw new BadRequestException(
-        `Email da ton tai: ${email}. Hay su dung email khac`
+        `Email already exists: ${email}. Please use another`
       );
     }
 
@@ -105,7 +105,12 @@ export class UsersService {
       updateUserInput.password = getHashPassword;
     }
 
-    const role = await this.roleRepository.findOneBy({name: RoleEnum.SuperAdmin})
+    let role = null
+    if (updateUserInput.role) {
+      role = await this.roleRepository.findOneBy({
+        name: updateUserInput.role.name,
+      });
+    }
 
     const dataNeedToUpdate = {
       ...checkExistUser,
@@ -162,7 +167,7 @@ export class UsersService {
     return await this.userRepository.findOne({
       where: { refreshToken },
       relations: ["role"],
-     /*  select: {
+      /*  select: {
         role: {
           name: true,
         },

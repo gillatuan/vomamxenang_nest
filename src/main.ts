@@ -25,6 +25,7 @@ async function bootstrap() {
     })
   );
 
+// somewhere in your initialization file
   app.use(cookieParser.default());
 
   //config cors

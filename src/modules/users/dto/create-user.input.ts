@@ -1,17 +1,18 @@
 import { CreateRoleInput } from '@/modules/roles/dto/create-role.input';
+import { UpdateRoleInput } from '@/modules/roles/dto/update-role.input';
 import {
   ArgsType,
   Field,
   InputType,
   ObjectType,
-  OmitType
+  OmitType,
+  PartialType
 } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { RoleEnum, UserType } from './user.dto';
 
 @InputType()
-@ArgsType()
-export class RegisterUserInput extends OmitType(UserType, ['avatar']) {
+export class RegisterUserInput extends OmitType(PartialType(UserType), ['avatar', 'role']) {
   @Field()
   @IsNotEmpty({ message: 'Email ko de trong' })
   @IsEmail({}, { message: 'Email ko dung dinh dang' })
@@ -33,7 +34,6 @@ export class RegisterUserInput extends OmitType(UserType, ['avatar']) {
   @IsNotEmpty()
   password: string;
 
-  @Field(() => CreateRoleInput, {nullable: true})
-  @IsOptional()
-  role?: CreateRoleInput;
+  @Field(() => UpdateRoleInput, {nullable: true})
+  role: UpdateRoleInput;
 }

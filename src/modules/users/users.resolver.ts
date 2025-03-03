@@ -5,7 +5,7 @@ import { RegisterUserInput } from "@/modules/users/dto/create-user.input";
 import { User } from "@/modules/users/entities/user.entity";
 import { UsersService } from "@/modules/users/users.service";
 import { UseInterceptors } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UpdateUserInput } from "./dto/update-user.input";
 import {
   UserPaginationResponse,
@@ -28,9 +28,18 @@ export class UsersResolver {
     };
   }
 
-  @Query(() => UserResponse, { nullable: true })
-  me(@GqlCurrentUser() user: User) {
-    return user; // Returns the authenticated user
+  @Query(() => String)
+  async me(@Context() context) {
+    console.log('Request Object:', context.req); // ✅ Log full request
+    console.log('Cookies:', context.req.cookies); // ✅ Check cookies
+
+    const refreshToken = context.req.cookies?.refresh_token;
+    
+    if (!refreshToken) {
+      throw new Error('Refresh token not found');
+    }
+
+    return `Your refresh token: ${refreshToken}`;
   }
 
   @Mutation(() => UserResponse, { name: "registerUser" })

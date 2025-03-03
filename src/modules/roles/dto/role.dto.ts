@@ -1,6 +1,7 @@
 import { BaseType } from '@/base/dto/base.dto';
 import { GraphQLResponse } from '@/base/dto/graphql-response.dto';
 import { PaginationResponse } from '@/base/dto/pagination.response';
+import { UserType } from '@/modules/users/dto/user.dto';
 import { User } from '@/modules/users/entities/user.entity';
 // import { PermissionTypeToValidate } from "@/modules/permissions/dto/permission.dto";
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -17,8 +18,8 @@ export class RoleType extends BaseType {
   @Field()
   isActive: boolean;
 
-  @Field(() => [User], { nullable: true })
-  users?: User[];
+  @Field(() => [UserType], { nullable: true })
+  users?: UserType[];
 
   /*   @Field(() => [PermissionTypeToValidate], { defaultValue: [] }) // ✅ Explicitly define the GraphQL type
   permissions: {
