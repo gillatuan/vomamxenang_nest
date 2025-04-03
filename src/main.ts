@@ -4,18 +4,24 @@ import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory, Reflector } from "@nestjs/core";
 import { JwtService } from "@nestjs/jwt";
-import * as cookieParser from 'cookie-parser';
+import * as cookieParser from "cookie-parser";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
+import { RefreshJwtGuard } from "./auth/guards/refresh-auth.guard";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // somewhere in your initialization file
+  app.use(cookieParser.default());
+
   const configService = app.get(ConfigService);
   const jwtService = app.get(JwtService);
   const usersService = app.get(UsersService);
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(
-    new JwtAuthGuard(reflector, jwtService, usersService, configService)
+    new JwtAuthGuard(reflector, jwtService, usersService, configService),
+    new RefreshJwtGuard(reflector, jwtService, usersService, configService)
   );
 
   app.useGlobalPipes(
@@ -24,9 +30,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
-
-// somewhere in your initialization file
-  app.use(cookieParser.default());
 
   //config cors
   app.enableCors({

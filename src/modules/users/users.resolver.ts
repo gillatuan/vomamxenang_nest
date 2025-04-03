@@ -30,16 +30,17 @@ export class UsersResolver {
 
   @Query(() => String)
   async me(@Context() context) {
-    console.log('Request Object:', context.req); // ✅ Log full request
+    /* console.log('Request Object:', context.req); // ✅ Log full request
     console.log('Cookies:', context.req.cookies); // ✅ Check cookies
 
     const refreshToken = context.req.cookies?.refresh_token;
     
     if (!refreshToken) {
       throw new Error('Refresh token not found');
-    }
+    } */
 
-    return `Your refresh token: ${refreshToken}`;
+    return `Me`;
+    // return `Your refresh token: ${refreshToken}`;
   }
 
   @Mutation(() => UserResponse, { name: "registerUser" })

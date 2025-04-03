@@ -1,10 +1,3 @@
-/* import { ExecutionContext, Injectable } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { AuthGuard } from '@nestjs/passport';
-
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {} */
-
 import { IS_PUBLIC_KEY, IS_PUBLIC_PERMISSION } from "@/helpers/customize";
 import { UsersService } from "@/modules/users/users.service";
 import {
@@ -21,7 +14,7 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard("jwt") {
+export class RefreshJwtGuard extends AuthGuard("jwt") {
   constructor(
     private reflector: Reflector,
     private jwtService: JwtService,
@@ -52,7 +45,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.get("JWT_ACCESS_TOKEN_SECRET"),
+        secret: this.configService.get("JWT_REFRESH_TOKEN_SECRET"),
       });
       const user = await this.userService.findOne({ id: payload.id });
       ctx.getContext().req.user = user;
@@ -69,7 +62,7 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
       ? req.headers.authorization.split(" ")
       : [];
 
-    return type === "Bearer" ? token : undefined;
+    return type === "Refresh" ? token : undefined;
   }
 
   handleRequest(err, user, info, context: ExecutionContext) {

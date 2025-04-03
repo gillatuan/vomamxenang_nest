@@ -1,12 +1,10 @@
 // user.dto.ts
-import { BaseType } from "@/base/dto/base.dto";
 import { GraphQLResponse } from "@/base/dto/graphql-response.dto";
 import { PaginationResponse } from "@/base/dto/pagination.response";
 import { Role } from "@/modules/roles/entities/role.entity";
 // import { RoleType } from "@/roles/dto/role.dto";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsOptional } from "class-validator";
-import { ManyToOne } from "typeorm";
 
 export enum RoleEnum {
   SuperAdmin = "SUPER_ADMIN",
@@ -31,7 +29,7 @@ export class UserType {
   @Field({ defaultValue: "", nullable: true })
   avatar?: string;
 
-  @Field(() => Role, {nullable: true})
+  @Field(() => Role, { nullable: true })
   @IsOptional()
   role?: Role;
 

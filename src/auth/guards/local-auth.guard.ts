@@ -5,7 +5,7 @@ import { AuthGuard } from '@nestjs/passport';
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
   // Override this method so it can be used in graphql
-  getRequest(context: ExecutionContext) {
+/*   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     
     const gqlReq = ctx.getContext().req;
@@ -16,5 +16,5 @@ export class LocalAuthGuard extends AuthGuard('local') {
     }
 
     return context.switchToHttp().getRequest();
-  }
+  } */
 }

@@ -95,5 +95,5 @@ export class JWTAccessToken extends JWTRefreshAccessToken {
   refresh_token: string;
 
   @Field()
-  access_expire: string;
+  access_expire: number;
 }

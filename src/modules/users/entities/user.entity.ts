@@ -2,11 +2,14 @@ import { BaseEntity } from '@/base/entity/base.entity';
 import { Role } from '@/modules/roles/entities/role.entity';
 // import { Role } from '@/modules/roles/entities/role.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  
   @Field()
   @Column()
   email: string;

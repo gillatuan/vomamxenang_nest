@@ -1,3 +1,11 @@
+Flow Login
+- LocalAuthGuard: to get Input data request (loginInput)
+- LocalStrategy: to validate exist user and login since it is included in AuthModule
+- AuthResolver: login
+
 Error: Cannot determine a GraphQL input type ("PermissionType") for the "permissions". 
 Make sure your class is decorated with an appropriate decorator.
 ==> Cause is using the type query. Should use input query
+
+ERROR [ExceptionsHandler] Cannot read properties of undefined (reading 'logIn')
+==> not check getRequest in AuthGuard("local")Ø

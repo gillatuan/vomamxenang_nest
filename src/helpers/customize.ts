@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   SetMetadata,
 } from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
+import { GqlContextType, GqlExecutionContext } from "@nestjs/graphql";
 
 export const IS_PUBLIC_KEY = "isPublic";
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true); //key:value
@@ -36,3 +36,11 @@ export const GqlCookie = createParamDecorator(
     return ctx.req.cookies; // Extract user from GraphQL context
   }
 );
+
+export const getCurrentUserByContext = (context: ExecutionContext) => {
+  if (context.getType() === "http") {
+    return context.switchToHttp().getRequest().user;
+  } else if (context.getType<GqlContextType>() === 'graphql') {
+    return GqlExecutionContext.create(context).getContext().req.user
+  }
+};

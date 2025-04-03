@@ -6,7 +6,6 @@ import {
   JWTAccessToken,
   LoginInput,
 } from "@/auth/dto/auth.dto";
-import { LocalAuthGuard } from "@/auth/guards/local-auth.guard";
 import { GqlCurrentUser, Public, ResponseMessage } from "@/helpers/customize";
 import { UserResponse, UserType } from "@/modules/users/dto/user.dto";
 import { IUser } from "@/modules/users/entities/users";
@@ -20,6 +19,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { Response } from "express";
+import { GqlAuthGuard } from "./guards/gql-auth.guard";
 
 @Resolver()
 export class AuthResolver {
@@ -36,7 +36,7 @@ export class AuthResolver {
 
   @Mutation(() => JWTAccessToken)
   @Public()
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(GqlAuthGuard)
   login(
     @Args("loginInput") loginInput: LoginInput,
     @Context() context
@@ -49,7 +49,7 @@ export class AuthResolver {
   @Public()
   @ResponseMessage("Logout")
   @Mutation(() => JWTAccessToken, { name: "Logout" })
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(GqlAuthGuard)
   logout(@Context() context) {
     const userPayload = context.req.user as AuthPayload;
 

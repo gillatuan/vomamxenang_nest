@@ -14,8 +14,8 @@ import { RolesModule } from "./modules/roles/roles.module";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
-      context: ({ req, res }) => ({ req, res }),
       autoSchemaFile: join(process.cwd(), "src/schema.gql"),
+      context: ({ req, res }) => ({ req, res }),
       sortSchema: true,
     }),
     TypeOrmModule.forRootAsync({

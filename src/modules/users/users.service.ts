@@ -105,7 +105,7 @@ export class UsersService {
       updateUserInput.password = getHashPassword;
     }
 
-    let role = null
+    let role = null;
     if (updateUserInput.role) {
       role = await this.roleRepository.findOneBy({
         name: updateUserInput.role.name,

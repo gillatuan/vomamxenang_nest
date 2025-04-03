@@ -47,15 +47,11 @@ export class AuthService {
       return null;
     }
 
-    const { password, isActive, codeExpired, codeId, ...result } = user;
+    const { isActive, codeExpired, codeId, ...result } = user;
     return result;
   }
 
-  async createAccessToken(payload: UserPayload) {
-    return await this.jwtService.sign(payload);
-  }
-
-  /*   async createRefreshToken(payload: UserPayload, res: Response) {
+  async createRefreshToken(payload: UserPayload, res: Response) {
     const expires_in = this.configService.get<string>("JWT_REFRESH_EXPIRED");
     const refresh_token = await this.jwtService.sign(payload, {
       secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
@@ -75,9 +71,21 @@ export class AuthService {
       refresh_token,
       expires_in,
     };
-  } */
+  }
+
+  updateRefreshToken = async (userId: string, refreshToken: string) => {
+    const hashedRefreshToken = await setHashPassword(refreshToken);
+    await this.userService.updateUser(userId, {
+      refreshToken: hashedRefreshToken,
+    });
+  };
 
   async login(user: AuthPayload, res: Response): Promise<JWTAccessToken> {
+    const expiresIn = new Date();
+    expiresIn.setSeconds(
+      expiresIn.getSeconds() +
+        this.configService.getOrThrow("JWT_ACCESS_TOKEN_EXPIRED")
+    );
     const payload = {
       sub: "token login",
       iss: "from server",
@@ -87,9 +95,20 @@ export class AuthService {
       avatar: user.avatar,
       address: user.address,
     };
-    
+
     const tokens = await this.getTokens(user.id, user.email);
+    res.cookie("Authentication", tokens.access_token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 1000,
+    });
+    res.cookie("RefreshToken", tokens.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 1000, // 7 ngày
+    });
     await this.updateRefreshToken(user.id, tokens.refresh_token);
+
     return {
       ...tokens,
       user: {
@@ -105,7 +124,7 @@ export class AuthService {
 
   logout = async (userId: string) => {
     this.userService.updateUser(userId, { refreshToken: null });
-  }
+  };
 
   refreshTokens = async (userId: string, refreshToken: string) => {
     const user = await this.userService.findOne({ id: userId });
@@ -127,15 +146,10 @@ export class AuthService {
     return tokens;
   };
 
-  updateRefreshToken = async (userId: string, refreshToken: string) => {
-    const hashedRefreshToken = await setHashPassword(refreshToken);
-    await this.userService.updateUser(userId, {
-      refreshToken: hashedRefreshToken,
-    });
-  };
-
   getTokens = async (userId: string, username: string) => {
-    const accessExpired = this.configService.get<string>("JWT_ACCESS_TOKEN_EXPIRED")
+    const accessExpired = +this.configService.get<string>(
+      "JWT_ACCESS_TOKEN_EXPIRED"
+    );
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -154,7 +168,9 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>("JWT_REFRESH_TOKEN_SECRET"),
-          expiresIn: this.configService.get<string>("JWT_REFRESH_TOKEN_EXPIRED"),
+          expiresIn: this.configService.get<string>(
+            "JWT_REFRESH_TOKEN_EXPIRED"
+          ),
         }
       ),
     ]);
@@ -162,7 +178,7 @@ export class AuthService {
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
-      access_expire: accessExpired
+      access_expire: accessExpired,
     };
   };
 
